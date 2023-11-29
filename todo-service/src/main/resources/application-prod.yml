@@ -1,0 +1,27 @@
+pringdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    disable-swagger-default-url: true
+    operations-sorter: method
+    urls:
+      - name: Jenjetsu Todo resource
+        url: /api-docs/swagger-config.yaml
+  
+
+spring:
+  application:
+    name: ${SPRING_APPLICATION_NAME:Jenjetsu-todo}
+  datasource:
+    username: ${SPRING_DATASOURCE_USERNAME:Stey}
+    password: ${SPRING_DATASOURCE_PASSWORD:1228}
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME:org.postgresql.Driver}
+    url: ${SPRING_DATASOURCE_URL}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI}

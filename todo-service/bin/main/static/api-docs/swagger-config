@@ -1,0 +1,1342 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "version": "0.0.1",
+    "title": "Jenjetsu TODO rest service",
+    "description": "None"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:7777/api/v1",
+      "description": "Resource server"
+    },
+    {
+      "url": "http://localhost:8080",
+      "description": "Keycloak server"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/users": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get full user information with tasks and activities",
+        "tags": [
+          "Users"
+        ],
+        "operationId": "getUser",
+        "responses": {
+          "200": {
+            "description": "Successful load user with information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserReturnDTO"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Create new user",
+        "tags": [
+          "Users"
+        ],
+        "operationId": "createUser",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCreateDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/CreatedResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/PermissionDenided"
+          }
+        }
+      }
+    },
+    "/users/todo": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get user tasks with this user activities",
+        "tags": [
+          "Users"
+        ],
+        "operationId": "getUserTodos",
+        "responses": {
+          "200": {
+            "description": "Successful obtain user with activities",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "tasks"
+                  ],
+                  "properties": {
+                    "tasks": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TaskReturnDTO"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/tasks": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get all user tasks",
+        "tags": [
+          "Tasks"
+        ],
+        "operationId": "getUserTasks",
+        "responses": {
+          "200": {
+            "description": "Successful obtaining user tasks",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskReturnDTOList"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Create new task",
+        "tags": [
+          "Tasks"
+        ],
+        "operationId": "createTask",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskCreateDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful create new task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "task_id"
+                  ],
+                  "properties": {
+                    "task_id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "example": "9237dde5-3a9a-42d7-be9e-9a63f30da13d"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/tasks/{task_id}": {
+      "parameters": [
+        {
+          "name": "task_id",
+          "in": "path",
+          "required": true,
+          "description": "Task identificator",
+          "schema": {
+            "type": "string",
+            "format": "uuid",
+            "example": "9237dde5-3a9a-42d7-be9e-9a63f30da13d"
+          }
+        }
+      ],
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get task by id",
+        "tags": [
+          "Tasks"
+        ],
+        "operationId": "getTaskById",
+        "responses": {
+          "200": {
+            "description": "Successful obtaining task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskReturnDTO"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "description": "Task with id not exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error_message"
+                  ],
+                  "properties": {
+                    "error_message": {
+                      "type": "string",
+                      "example": "Entity Task with id 9237dde5-3a9a-42d7-be9e-9a63f30da13d not exists"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Move task to trash bin for future deleteing",
+        "tags": [
+          "Tasks"
+        ],
+        "operationId": "deleteTaskById",
+        "responses": {
+          "200": {
+            "description": "Successful deleting activity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "message"
+                  ],
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Task 9237dde5-3a9a-42d7-be9e-9a63f30da13d was moved to trash bin"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Try to delete deleted task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error_message"
+                  ],
+                  "properties": {
+                    "error_message": {
+                      "type": "string",
+                      "example": "Task 9237dde5-3a9a-42d7-be9e-9a63f30da13d delete status is already deleted"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "description": "Try to delete task by not owner",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskModyfyByNotCreatorError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Try to get not existing task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskNotFoundError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/status": {
+      "patch": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Change task status",
+        "tags": [
+          "Tasks"
+        ],
+        "operationId": "changeTaskStatus",
+        "requestBody": {
+          "required": true,
+          "description": "Body to change task status",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "task_id",
+                  "status"
+                ],
+                "properties": {
+                  "task_id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "example": "9237dde5-3a9a-42d7-be9e-9a63f30da13d"
+                  },
+                  "status": {
+                    "type": "string",
+                    "example": "ON_INSPECTION"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OkResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "description": "Try to change task status by not creator or workers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error_message"
+                  ],
+                  "properties": {
+                    "error_message": {
+                      "type": "string",
+                      "example": "Only creator or worker can change status of task 9237dde5-3a9a-42d7-be9e-9a63f30da13d"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Try to change status of not existing task or set not existing status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "required": [
+                    "error_message"
+                  ],
+                  "properties": {
+                    "error_message": {
+                      "type": "string",
+                      "example": "Status ON_INSPECTION is not exists"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/add-user": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Link user to task by creator",
+        "tags": [
+          "Tasks"
+        ],
+        "operationId": "addUserToTask",
+        "requestBody": {
+          "required": true,
+          "description": "Body to link user with task",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "task_id"
+                ],
+                "properties": {
+                  "task_id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "example": "9237dde5-3a9a-42d7-be9e-9a63f30da13d"
+                  },
+                  "user_id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "example": "555eceb7-331e-45f6-bf5c-fde18362eca1"
+                  },
+                  "username": {
+                    "type": "string",
+                    "example": "stey"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "tcvetkov.so@dvfu.ru"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/CreatedResponse"
+          },
+          "400": {
+            "description": "Try to link linked user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error_message"
+                  ],
+                  "properties": {
+                    "error_message": {
+                      "type": "string",
+                      "example": "User stey with id 555eceb7-331e-45f6-bf5c-fde18362eca1 is already linked to this task"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "description": "Try to link user to task by not creator",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskModyfyByNotCreatorError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Try to linked not existing user or not existing task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error_message"
+                  ],
+                  "properties": {
+                    "error_message": {
+                      "type": "string",
+                      "example": "User with 555eceb7-331e-45f6-bf5c-fde18362eca1, username stey, email tcvetkov.so@dvfu.ru is not exists"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/created-by-my": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get all tasks created by user",
+        "tags": [
+          "Tasks"
+        ],
+        "operationId": "getTasksCreatedByMy",
+        "responses": {
+          "200": {
+            "description": "Successful obtaining tasks",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskReturnDTOList"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/tasks/take/{task_id}": {
+      "parameters": [
+        {
+          "name": "task_id",
+          "required": true,
+          "in": "path",
+          "description": "Task identifier",
+          "schema": {
+            "type": "string",
+            "format": "uuid",
+            "example": "9237dde5-3a9a-42d7-be9e-9a63f30da13d"
+          }
+        }
+      ],
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Take task",
+        "tags": [
+          "Tasks"
+        ],
+        "operationId": "takeTask",
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/CreatedResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "description": "Try to get not existing task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskNotFoundError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/restore/{task_id}": {
+      "parameters": [
+        {
+          "name": "task_id",
+          "required": true,
+          "in": "path",
+          "description": "Task identifier",
+          "schema": {
+            "type": "string",
+            "format": "uuid",
+            "example": "9237dde5-3a9a-42d7-be9e-9a63f30da13d"
+          }
+        }
+      ],
+      "patch": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Move task from trash bin",
+        "tags": [
+          "Tasks"
+        ],
+        "operationId": "restoreTask",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OkResponse"
+          },
+          "400": {
+            "description": "Try to delete deleted task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error_message"
+                  ],
+                  "properties": {
+                    "error_message": {
+                      "type": "string",
+                      "example": "Task 9237dde5-3a9a-42d7-be9e-9a63f30da13d delete status is already restored"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "description": "Try to restore task by not owner",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskModyfyByNotCreatorError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Try to get not existing task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskNotFoundError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/activities": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "Activities"
+        ],
+        "summary": "Get all user activities",
+        "operationId": "getActivities",
+        "responses": {
+          "200": {
+            "description": "Successful obtaining user activities",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskActivityReturnDTOList"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Create user activity",
+        "tags": [
+          "Activities"
+        ],
+        "operationId": "createActivity",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskActivityCreateDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful creating activity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "task_activity_id"
+                  ],
+                  "properties": {
+                    "task_activity_id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "example": "9237dde5-3a9a-42d7-be9e-9a63f30da13d"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error in saving entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error_message"
+                  ],
+                  "properties": {
+                    "error_message": {
+                      "type": "string",
+                      "example": "Impossible to save Entity TaskActivity"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/activities/{activity_id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get activity by id",
+        "tags": [
+          "Activities"
+        ],
+        "operationId": "getActivityById",
+        "parameters": [
+          {
+            "name": "activity_id",
+            "in": "path",
+            "required": true,
+            "description": "Activity identificator",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "555eceb7-331e-45f6-bf5c-fde18362eca1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful obtaining activity by id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskActivityReturnDTO"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "description": "Activity does not exists in database",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "code",
+                    "message"
+                  ],
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Entity TaskActivity with id 555eceb7-331e-45f6-bf5c-fde18362eca1 not exists"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Marke status as deleted for future deleting",
+        "tags": [
+          "Activities"
+        ],
+        "operationId": "deleteActivity",
+        "parameters": [
+          {
+            "name": "activity_id",
+            "in": "path",
+            "required": true,
+            "description": "Activity identificator",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "555eceb7-331e-45f6-bf5c-fde18362eca1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful deleting activity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "message"
+                  ],
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Activity 555eceb7-331e-45f6-bf5c-fde18362eca1 was moved to trash bin"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User is not activity creator",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error_message"
+                  ],
+                  "properties": {
+                    "error_message": {
+                      "type": "string",
+                      "example": "Only creator can modify activity 555eceb7-331e-45f6-bf5c-fde18362eca1"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Entity not exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error_message"
+                  ],
+                  "properties": {
+                    "error_message": {
+                      "type": "string",
+                      "example": "Impossible to find entity TaskActivity with id 555eceb7-331e-45f6-bf5c-fde18362eca1"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/activities/created-by-my": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get all activities that were created by user",
+        "tags": [
+          "Activities"
+        ],
+        "operationId": "getActivitiesCreatedByMy",
+        "responses": {
+          "200": {
+            "description": "Successful obtaining activities",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskActivityReturnDTOList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not authorized",
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/activities/status": {
+      "patch": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Change status of activity",
+        "tags": [
+          "Activities"
+        ],
+        "operationId": "changeActivityStatus",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "task_activity_id",
+                  "status"
+                ],
+                "properties": {
+                  "task_activity_id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "example": "555eceb7-331e-45f6-bf5c-fde18362eca1"
+                  },
+                  "status": {
+                    "type": "string",
+                    "example": "ON_INSPECTION"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OkResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "description": "User is not activity creator or worker",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error_message"
+                  ],
+                  "properties": {
+                    "error_message": {
+                      "type": "string",
+                      "example": "Only creator or workers can modify activity 555eceb7-331e-45f6-bf5c-fde18362eca1"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Entity not exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error_message"
+                  ],
+                  "properties": {
+                    "error_message": {
+                      "type": "string",
+                      "example": "Impossible to find entity ActivityStatus with name ON_INSPECTION"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "UserCreateDTO": {
+        "type": "object",
+        "required": [
+          "username",
+          "email"
+        ],
+        "properties": {
+          "username": {
+            "type": "string",
+            "example": "stey"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "tsvetkov.so@dvfu.ru"
+          },
+          "phone_number": {
+            "type": "integer",
+            "example": 79147691680
+          },
+          "firstname": {
+            "type": "string",
+            "example": "Stas"
+          },
+          "lastname": {
+            "type": "string",
+            "example": "Tsvetkov"
+          }
+        }
+      },
+      "TaskCreateDTO": {
+        "type": "object",
+        "required": [
+          "title"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Mobile application upgrading"
+          },
+          "description": {
+            "type": "string",
+            "example": "Some words about how to make our app better and get new audience"
+          }
+        }
+      },
+      "TaskActivityCreateDTO": {
+        "type": "object",
+        "required": [
+          "task_id",
+          "title"
+        ],
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "9237dde5-3a9a-42d7-be9e-9a63f30da13d"
+          },
+          "title": {
+            "type": "string",
+            "example": "Survey among grannies"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "555eceb7-331e-45f6-bf5c-fde18362eca1"
+          },
+          "username": {
+            "type": "string",
+            "example": "stey"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "tsvetkov.so@dvfu.ru"
+          },
+          "description": {
+            "type": "string",
+            "example": "Make a survey among grannies about how our phone app helps in routine and what they want to see in future updates"
+          }
+        }
+      },
+      "UserReturnDTO": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "555eceb7-331e-45f6-bf5c-fde18362eca1"
+          },
+          "username": {
+            "type": "string",
+            "example": "stey"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "tsvetkov.so@dvfu.ru"
+          },
+          "phone_number": {
+            "type": "integer",
+            "example": 79147610754
+          },
+          "firstname": {
+            "type": "string",
+            "example": "Stas"
+          },
+          "lastname": {
+            "type": "string",
+            "example": "Tsvetkov"
+          },
+          "blocked": {
+            "type": "boolean",
+            "example": false
+          },
+          "tasks": {
+            "type": "array",
+            "description": "Don't be in UserReturnDTO",
+            "items": {
+              "$ref": "#/components/schemas/TaskReturnDTO"
+            }
+          },
+          "activities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TaskActivityReturnDTO"
+            }
+          }
+        }
+      },
+      "TaskReturnDTO": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "9237dde5-3a9a-42d7-be9e-9a63f30da13d"
+          },
+          "title": {
+            "type": "string",
+            "example": "Layouting form for login page"
+          },
+          "description": {
+            "type": "string",
+            "example": "Design login page"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "CREATED",
+              "...",
+              "FINISHED"
+            ],
+            "description": "Task statuses that show job progress"
+          },
+          "deleted": {
+            "type": "boolean",
+            "example": false
+          },
+          "created_by": {
+            "type": "string",
+            "format": "uuid",
+            "example": "555eceb7-331e-45f6-bf5c-fde18362eca1",
+            "description": "User who create Task"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date",
+            "description": "Date and time of creating activity",
+            "example": "2023-12-15 04:00:00"
+          },
+          "activities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TaskActivityReturnDTO"
+            }
+          },
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserReturnDTO"
+            }
+          },
+          "commentaries": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "TaskActivityReturnDTO": {
+        "type": "object",
+        "properties": {
+          "task_activity_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "555eceb7-331e-45f6-bf5c-fde18362eca1"
+          },
+          "title": {
+            "type": "string",
+            "example": "Make simple design for login form"
+          },
+          "description": {
+            "type": "string",
+            "example": "Make nice and best, don't make bad and ugly"
+          },
+          "task_status": {
+            "type": "string",
+            "description": "Activity statuses that show job progress",
+            "enum": [
+              "CREATED",
+              "...",
+              "FINISHED"
+            ]
+          },
+          "deleted": {
+            "type": "boolean",
+            "example": false
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "29b22516-f7ef-4629-946d-96f6d6982f87",
+            "description": "User who performs the activity"
+          },
+          "task_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "9237dde5-3a9a-42d7-be9e-9a63f30da13d",
+            "description": "Activity for Task"
+          },
+          "created_by": {
+            "type": "string",
+            "format": "uuid",
+            "example": "29b22516-f7ef-4629-946d-96f6d6982f87",
+            "description": "User who create activity for another user"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date",
+            "description": "Date and time of creating activity",
+            "example": "2023-12-15 04:00:00"
+          }
+        }
+      },
+      "TaskActivityReturnDTOList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/TaskActivityReturnDTO"
+        }
+      },
+      "TaskReturnDTOList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/TaskReturnDTO"
+        }
+      },
+      "TaskNotFoundError": {
+        "type": "object",
+        "required": [
+          "error_message"
+        ],
+        "properties": {
+          "error_message": {
+            "type": "string",
+            "example": "Entity Task with id 9237dde5-3a9a-42d7-be9e-9a63f30da13d is not exists"
+          }
+        }
+      },
+      "TaskModyfyByNotCreatorError": {
+        "type": "object",
+        "required": [
+          "error_message"
+        ],
+        "properties": {
+          "error_message": {
+            "type": "string",
+            "example": "Only creator can modify task 9237dde5-3a9a-42d7-be9e-9a63f30da13d"
+          }
+        }
+      }
+    },
+    "responses": {
+      "OkResponse": {
+        "description": "Successful request without body"
+      },
+      "CreatedResponse": {
+        "description": "Successful creating request without body"
+      },
+      "PermissionDenided": {
+        "description": "User has not authorities to make this"
+      },
+      "UnauthorizedError": {
+        "description": "Access token is missing or invalid"
+      }
+    }
+  }
+}

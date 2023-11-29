@@ -1,0 +1,64 @@
+version: "3.8"
+services:
+    web-database:
+        image: postgres:15.4
+        restart: always
+        container_name: web-database
+        environment:
+            - POSTGRES_DB=jenjetsu_database
+            - POSTGRES_USER=Stey
+            - POSTGRES_PASSWORD=1228
+        volumes:
+            - ./pgdata:/var/lib/postgresql/data
+            - ./2. Init Database:/docker-entrypoint-initdb.d
+        ports:
+            - "5001:5432"
+        healthcheck:
+            test: pg_isready -d postgres
+            interval: 10s
+            timeout: 5s
+            start_period: 20s
+    keycloak:
+        restart: always
+        build:
+            context: ./
+            dockerfile: keycloak.dockerfile
+        container_name: keycloak
+        environment:
+            - KEYCLOAK_ADMIN=admin
+            - KEYCLOAK_ADMIN_PASSWORD=1228
+            - KC_DB_URL_HOST=web-database
+            - KC_DB_URL_PORT=5432
+            - KC_DB=postgres
+            - KC_DB_URL_DATABASE=jenjetsu_database
+            - KC_DB_SCHEMA=keycloak
+            - KC_DB_USERNAME=keycloak_user
+            - KC_DB_PASSWORD=ataW9nSrgfEo7mt
+            - KC_HOSTNAME_ADMIN=localhost
+            - KC_HOSTNAME_STRICT=false
+            - KC_HOSTNAME_STRICT_HTTPS=false
+            - KC_HTTP_ENABLED=true
+            - KC_HTTP_HOST=0.0.0.0
+            - KC_HOSTNAME=localhost
+        ports:
+            - "8080:8080"
+            - "8443:8443"
+        healthcheck:
+            test: curl -X GET http://localhost:8080/health
+            interval: 10s
+            timeout: 5s
+            start_period: 20s
+        depends_on:
+            web-database:
+                condition: service_healthy
+    web-application:
+        build:
+            context: ../
+            dockerfile: todo.dockerfile
+        container_name: web-application
+        ports:
+            - "7777:7777"
+        depends_on:
+            - web-database
+            - keycloak
+
