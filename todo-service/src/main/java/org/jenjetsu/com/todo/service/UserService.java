@@ -1,17 +1,16 @@
 package org.jenjetsu.com.todo.service;
 
+import java.util.List;
+import java.util.UUID;
+
 import org.jenjetsu.com.todo.model.Task;
-import org.jenjetsu.com.todo.model.TaskActivity;
 import org.jenjetsu.com.todo.model.User;
 import org.springframework.security.oauth2.jwt.Jwt;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 public interface UserService extends CRUDService<User, UUID> {
 
     public List<Task> readAllUserTasksWithUserActivities(UUID userId);
+    public User readByIdFetchAll(UUID userId);
     public User readByUsername(String login);
     public boolean existsByUsername(String username);
     public boolean existsByEmail(String email);

@@ -1,5 +1,9 @@
 package org.jenjetsu.com.todo.service.implementation;
 
+import static java.lang.String.format;
+import java.util.List;
+import java.util.UUID;
+
 import org.jenjetsu.com.todo.exception.EntityCreateException;
 import org.jenjetsu.com.todo.exception.EntityNotFoundException;
 import org.jenjetsu.com.todo.exception.EntityValidateException;
@@ -12,11 +16,6 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.UUID;
-
-import static java.lang.String.format;
 
 @Service
 public class UserServiceImpl extends SimpleJpaService<User, UUID> implements UserService {
@@ -31,6 +30,7 @@ public class UserServiceImpl extends SimpleJpaService<User, UUID> implements Use
         this.taskRep = taskRep;
     }
 
+
     @Override
     public List<Task> readAllUserTasksWithUserActivities(UUID userId) {
         if(!this.existsById(userId)) {
@@ -40,14 +40,21 @@ public class UserServiceImpl extends SimpleJpaService<User, UUID> implements Use
     }
 
     @Override
+    public User readByIdFetchAll(UUID userId) {
+        // return this.userRep.findByIdFetchAll(userId)
+        //     .orElseThrow(() -> new EntityNotFoundException(format("User with id %s not exists", userId)));
+        return null;
+    }
+
+    @Override
     public User readUserByUsername(String username) {
-        return this.userRep.findUserByUsername(username)
+        return this.userRep.findByUsername(username)
                 .orElseThrow((() -> new EntityNotFoundException(format("User with username %s not exists", username))));
     }
 
     @Override
     public User readUserByEmail(String email) {
-        return this.userRep.findUserByEmail(email)
+        return this.userRep.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException(format("User with email %s not exists", email)));
     }
 

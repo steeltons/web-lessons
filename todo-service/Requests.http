@@ -1,53 +1,57 @@
 @rootUrl=http://localhost:7777
 @realmUrl=http://localhost:8080/realms/jenjetsu-realm
 # May be expired
-@accessToken=eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI3QWE5dks0aUpqcG9FRzZ1dDBtblRsN1J4QnNzMGV4OVNFTjR0LXU3TTZVIn0.eyJleHAiOjE3MDEzMTMzOTQsImlhdCI6MTcwMTMwNDM5NCwianRpIjoiYWYxNzcyNGEtNDllNy00ZjhjLWExZGItZjhmOWJiMDY0Mjk2IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9qZW5qZXRzdS1yZWFsbSIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiI3MTMzNDEzMy1lY2Q4LTQxZDYtYTExZS00ZjI0MDNiMzRiY2IiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJqZW5qZXRzdS1zc28iLCJzZXNzaW9uX3N0YXRlIjoiNmE4ZmM5MDktNzBlYS00Y2MzLTkyMDEtNDhjNzE0ZTM2MTU3IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIqIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsIlJPTEVfTU9ERVJBVE9SIiwidW1hX2F1dGhvcml6YXRpb24iLCJkZWZhdWx0LXJvbGVzLWplbmpldHN1LXJlYWxtIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCIsInNpZCI6IjZhOGZjOTA5LTcwZWEtNGNjMy05MjAxLTQ4YzcxNGUzNjE1NyIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJzcHJpbmdfc2VjX3JvbGVzIjpbIm9mZmxpbmVfYWNjZXNzIiwiUk9MRV9NT0RFUkFUT1IiLCJ1bWFfYXV0aG9yaXphdGlvbiIsImRlZmF1bHQtcm9sZXMtamVuamV0c3UtcmVhbG0iXSwicHJlZmVycmVkX3VzZXJuYW1lIjoibWFuYWdlciIsImVtYWlsIjoibWFuYWdlckBtYWlsLmNvbSJ9.n3x2ya3ZcPoG86wRFhzeKNLrk5q3FzkjZFxuEi_j38WTzIbAqvB3GqEbToJbVRfDkhbguyF_jIuQUo_awOhoXEp1zYGPuW7iZ9FkrD_qW-59L68bUX2LgZlcG4TEmIgcAYx-j2ASMN6KbDzlhCS20CSvMxRTnKFTbbVQwO9OlIE21KiqGLCqBAbk8uyAn_EmmYzR8J1P9SvJaiBW4snlzF_gUnbO14sopuSojvOXd5vtAEQkaEWklzadUkqaq4mV0LOhR63ut7x_474Mkl-EO6EOyc4k56mMcImxzGHIwFadKsCCcLB0-N1NybG8g_o0JWtMpALT7Qg6db9l-Nq1QA
-@userAccessToken=eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI3QWE5dks0aUpqcG9FRzZ1dDBtblRsN1J4QnNzMGV4OVNFTjR0LXU3TTZVIn0.eyJleHAiOjE3MDEzMTU0ODksImlhdCI6MTcwMTMwNjQ4OSwianRpIjoiNGE2MDRhM2ItMGYwNy00MThhLThiNjctZjg2NzUyNzMzMDRmIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9qZW5qZXRzdS1yZWFsbSIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiI1OGU3NTAwZC04ODhhLTRhMDctYjA0Zi1kZjMzNjEwNTlhNjUiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJqZW5qZXRzdS1zc28iLCJzZXNzaW9uX3N0YXRlIjoiMTc4ZGNkZTAtOTE0ZC00MzQwLTgyNjUtMzBiMjI2MzI4NzcxIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIqIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIiwiZGVmYXVsdC1yb2xlcy1qZW5qZXRzdS1yZWFsbSJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJzaWQiOiIxNzhkY2RlMC05MTRkLTQzNDAtODI2NS0zMGIyMjYzMjg3NzEiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6Ikh1c3NlaW4gYmVtIExhZGVuIiwic3ByaW5nX3NlY19yb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIiwiZGVmYXVsdC1yb2xlcy1qZW5qZXRzdS1yZWFsbSJdLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJpc2lzIiwiZ2l2ZW5fbmFtZSI6Ikh1c3NlaW4iLCJmYW1pbHlfbmFtZSI6ImJlbSBMYWRlbiIsImVtYWlsIjoibnVrZWJvbWJAbWFpbC5jb20ifQ.C23E0pYurGgqYVahThZz0TFc-MubtvhUGHGzzFBPOxh475lJk18ZyL7m8hSuCat2UCmLp1Om21isWF62o_TTxrc2G_6np76MHVboQ0qDVHSJSqy_z2PfUPL9fhhCCwFFxG1RTgh8kfBNRiL54Pe1k1f4sFAGWKqeg_J1zjhLsSwz-7Kdnxuqj7Dl1Nwcx2HtvxdJyHo2f4_M7JrwoOsPqTXhNBHXyKp09KK2pDwyevoKzElaRSutmUkkj98ZsLrSBdfqro_E-yOyupWZv5kWA3LAUWW4Y_hqNEUp718bfj7Qy-GAJnA3VrG7Q-VTDQdnhVAHf_ijEy1NKhZLinwdig
+@managerAccessToken=eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI3QWE5dks0aUpqcG9FRzZ1dDBtblRsN1J4QnNzMGV4OVNFTjR0LXU3TTZVIn0.eyJleHAiOjE3MDEzNTMzMjEsImlhdCI6MTcwMTM0NDMyMSwianRpIjoiZmIzMGY4YWYtYzEyNC00MzFmLTgyYTAtYWZlM2U1M2RkZDVhIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9qZW5qZXRzdS1yZWFsbSIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiI3MTMzNDEzMy1lY2Q4LTQxZDYtYTExZS00ZjI0MDNiMzRiY2IiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJqZW5qZXRzdS1zc28iLCJzZXNzaW9uX3N0YXRlIjoiMjAzNWYwNjItZDhjNy00MDRiLTlmMTAtMzc2MTFmODllODdhIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIqIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsIlJPTEVfTU9ERVJBVE9SIiwidW1hX2F1dGhvcml6YXRpb24iLCJkZWZhdWx0LXJvbGVzLWplbmpldHN1LXJlYWxtIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCIsInNpZCI6IjIwMzVmMDYyLWQ4YzctNDA0Yi05ZjEwLTM3NjExZjg5ZTg3YSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJzcHJpbmdfc2VjX3JvbGVzIjpbIm9mZmxpbmVfYWNjZXNzIiwiUk9MRV9NT0RFUkFUT1IiLCJ1bWFfYXV0aG9yaXphdGlvbiIsImRlZmF1bHQtcm9sZXMtamVuamV0c3UtcmVhbG0iXSwicHJlZmVycmVkX3VzZXJuYW1lIjoibWFuYWdlciIsImVtYWlsIjoibWFuYWdlckBtYWlsLmNvbSJ9.jxa0ylZAS7M-wlM9tC8irCZiAKMDsUG-sJsLHTYb07u5Spvs3GHGXOxykgO2SzPG3Klj4hwvuDP5c0J4AgAg1q0yL2s3AhvY-cASj_WgfWsLJ6mW54Hi9T9lUyRKlzlSS2Vr6u8F3Gek0LEY_wzOM1O4o85ibAxv4Ocxn6Nz8WJnB7SDpyc7EeKaQ9QyOOS46DPzibyHWzS4B-hajmH0HzDHb-Lf0LYbAE_pEt-nJCizbJNn7p0F7wtJxDHbyPsFJ8pZWjwPCBgam8fgeFPsBnDTsbbUFh2KbKIvNYeXBgqKWbVnhUNypeblgvyjYiu3mdI1G229-fMitm4bdj-e_A
+@isisAccessToken=eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI3QWE5dks0aUpqcG9FRzZ1dDBtblRsN1J4QnNzMGV4OVNFTjR0LXU3TTZVIn0.eyJleHAiOjE3MDEzNTM5NTIsImlhdCI6MTcwMTM0NDk1MiwianRpIjoiZGQ5N2E5YTgtZmFhYS00NGNkLWFhMGMtMzg0ODE2ZWJkMDc0IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9qZW5qZXRzdS1yZWFsbSIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiI1OGU3NTAwZC04ODhhLTRhMDctYjA0Zi1kZjMzNjEwNTlhNjUiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJqZW5qZXRzdS1zc28iLCJzZXNzaW9uX3N0YXRlIjoiMTk5YWNhMDgtMDU1OS00Yzk5LWE2YmEtMTZkYWRhYjJkN2EwIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIqIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIiwiZGVmYXVsdC1yb2xlcy1qZW5qZXRzdS1yZWFsbSJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJzaWQiOiIxOTlhY2EwOC0wNTU5LTRjOTktYTZiYS0xNmRhZGFiMmQ3YTAiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6Ikh1c3NlaW4gYmVtIExhZGVuIiwic3ByaW5nX3NlY19yb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIiwiZGVmYXVsdC1yb2xlcy1qZW5qZXRzdS1yZWFsbSJdLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJpc2lzIiwiZ2l2ZW5fbmFtZSI6Ikh1c3NlaW4iLCJmYW1pbHlfbmFtZSI6ImJlbSBMYWRlbiIsImVtYWlsIjoibnVrZWJvbWJAbWFpbC5jb20ifQ.W1WA5zXGiv66oZbPSNCO_F6ET2dzv-Dd4XDdcRmiSA2noTBhqoyjqVCQ0o1qS6Q5sfjG85C2FIMwyUZ0KaYOrXTwYskKBlQL7O-9x2NPVtMVewYdeqNpyGzEf2xKHjyfoQmYrRYZgs929cbCFg8PZOSWXTrl824fekABIEOYPaSKTYftfuZt0fQmMbn4vbjcRgIBTJXn0XtAArzlHhJZm8EkHOsysjHoj41L0epnWRS4RS6MjhksGmW5JWL3QueF_TA3E4uOzFzM0U0m_tedWlqfe0EoTkEhOPvOWRahWgs6YBE2WANtV3btQOFNrllcjhtsuJi7pP_sqmwoFz9ang
+@lakmilakAccessToken=eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI3QWE5dks0aUpqcG9FRzZ1dDBtblRsN1J4QnNzMGV4OVNFTjR0LXU3TTZVIn0.eyJleHAiOjE3MDEzNTQ3MjIsImlhdCI6MTcwMTM0NTcyMiwianRpIjoiODFiNTJjMmEtOWEyNi00M2IyLTk3YWMtYjVmM2I5Mjg3Y2I0IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9qZW5qZXRzdS1yZWFsbSIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiJhOWE3ZjljZS00Mjk4LTRlZTktOTE1OC1kZGUxOTZjMDQ3YjEiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJqZW5qZXRzdS1zc28iLCJzZXNzaW9uX3N0YXRlIjoiN2QxZmMxNWMtZWRhNy00MGUxLTkxZGUtNTMxYWViYzZiYjUyIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIqIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIiwiZGVmYXVsdC1yb2xlcy1qZW5qZXRzdS1yZWFsbSJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJzaWQiOiI3ZDFmYzE1Yy1lZGE3LTQwZTEtOTFkZS01MzFhZWJjNmJiNTIiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsIm5hbWUiOiJTdGFzIFRzdmV0a292Iiwic3ByaW5nX3NlY19yb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIiwiZGVmYXVsdC1yb2xlcy1qZW5qZXRzdS1yZWFsbSJdLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJsYWttaWxhayIsImdpdmVuX25hbWUiOiJTdGFzIiwiZmFtaWx5X25hbWUiOiJUc3ZldGtvdiIsImVtYWlsIjoidHN2ZXRzdGFzMzBAZ21haWwuY29tIn0.Qa2ChYyhbJ0aPltw7lxRPn__t4D1UAFzWcNFcvMCci-i6SzCh8Z5eOMFbb0GOFC3iOCaA54uUsw65MFt1w4q60r48aKtWDa4VR6ME-VxZoSIwzNBnljpvBgNt_HqR2nzgnD70nagoigVO1z0vmddOsTD4BA8Pu1NaxrsTYmugcuzn_eQa4Zuer2z4H03HFz89V-KL36ykQyrDWT6diJku0eTGqxq0lK2wKdUD8SaLiFzgLSo9rRDuk0BenQip6LlgCUS-dBzkwX48URzXepIarzPiQcvrnhbwIqyGnfO_CBma2jCcaqgFXZF3JRGZIuOQmsHee1UKRntfX6pOzEpiA
 
-# Obtaining manager tokens
+### Obtaining task creator token (also manager)
 POST {{realmUrl}}/protocol/openid-connect/token
 Content-Type: application/x-www-form-urlencoded
 
 grant_type=password&client_id=jenjetsu-sso&client_secret=tb9YimCmd5R1JBVyChxjIEyY6Tv0QEso&redirect_uri=http://localhost:7777/login/oauth2/code/jenjetsu-sso&username=manager&password=1228
 
-###
-
-# Obtain user token
+### Obtain user (member) token
 
 POST {{realmUrl}}/protocol/openid-connect/token
 Content-Type: application/x-www-form-urlencoded
 
 grant_type=password&client_id=jenjetsu-sso&client_secret=tb9YimCmd5R1JBVyChxjIEyY6Tv0QEso&redirect_uri=http://localhost:7777/login/oauth2/code/jenjetsu-sso&username=isis&password=1228
 
-###
+### Obtain not task member user token
+POST {{realmUrl}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id=jenjetsu-sso&client_secret=tb9YimCmd5R1JBVyChxjIEyY6Tv0QEso&redirect_uri=http://localhost:7777/login/oauth2/code/jenjetsu-sso&username=lakmilak&password=1228
+
+### Get user information
 
 GET {{rootUrl}}/api/v1/users
-Authorization: Bearer {{accessToken}}
+Authorization: Bearer {{lakmilakAccessToken}}
 
-###
+### Get user tasks
 
-# Create new dashboard
+GET {{rootUrl}}/api/v1/users/todo
+Authorization: Bearer {{managerAccessToken}}
+
+### Create new dashboard
 
 POST {{rootUrl}}/api/v1/dashboards
 Content-Type: application/json
-Authorization: Bearer {{accessToken}}
+Authorization: Bearer {{managerAccessToken}}
 
 {
     "is_hidden":true
 }
 
-###
-
-# Get dashboard by id
+### Get dashboard by id
 
 GET {{rootUrl}}/api/v1/dashboards/9d86655e-dff2-45af-acda-66bea421e72a
-Authorization: Bearer {{accessToken}}
+Authorization: Bearer {{managerAccessToken}}
 
-###
-
-# Create new user
+### Create new user
 POST {{rootUrl}}/api/v1/users
-Authorization: Bearer {{accessToken}}
+Authorization: Bearer {{managerAccessToken}}
 Content-Type: application/json
 
 {
@@ -57,12 +61,10 @@ Content-Type: application/json
     "lastname" : "Tsvetkov"
 }
 
-###
-
-# Invite user to dashboard
+### Invite user to dashboard
 
 POST {{rootUrl}}/api/v1/dashboards/invite
-Authorization: Bearer {{accessToken}}
+Authorization: Bearer {{managerAccessToken}}
 Content-Type: application/json
 
 {
@@ -70,9 +72,130 @@ Content-Type: application/json
     "email" : "nukebomb@mail.com"
 }
 
-###
-
-# Accept invite
+### Accept invite
 
 PUT {{rootUrl}}/api/v1/dashboards/invite/b79a9936-28c1-449f-93d5-4b60730cd144
-Authorization: Bearer {{userAccessToken}}
+Authorization: Bearer {{isisAccessToken}}
+
+### Create task
+POST {{rootUrl}}/api/v1/tasks
+Authorization: Bearer {{managerAccessToken}}
+Content-Type: application/json
+
+{
+    "dashboard_id" : "9d86655e-dff2-45af-acda-66bea421e72a",
+    "title" : "test-task"
+}
+
+### Add user to task
+
+POST {{rootUrl}}/api/v1/tasks/add-user
+Authorization: Bearer {{managerAccessToken}}
+Content-Type: application/json
+
+{
+    "task_id" : "6480bd03-587c-4cfd-9fcf-272ef86025da",
+    "dashboard_id" : "9d86655e-dff2-45af-acda-66bea421e72a",
+    "username" : "isis"
+}
+
+### Take task by Dashboard member
+
+POST {{rootUrl}}/api/v1/tasks/take
+Authorization: Bearer {{isisAccessToken}}
+Content-Type: application/json
+
+{
+    "task_id" : "6480bd03-587c-4cfd-9fcf-272ef86025da",
+    "dashboard_id" : "9d86655e-dff2-45af-acda-66bea421e72a"
+}
+
+### Add activity to user
+POST {{rootUrl}}/api/v1/activities
+Authorization: Bearer {{managerAccessToken}}
+Content-Type: application/json
+
+{
+    "task_id" : "6480bd03-587c-4cfd-9fcf-272ef86025da",
+    "title" : "test-activity",
+    "username" : "isis"
+}
+
+### Change task delete status
+DELETE  {{rootUrl}}/api/v1/tasks/6480bd03-587c-4cfd-9fcf-272ef86025da
+Authorization: Bearer {{managerAccessToken}}
+
+### Restore task
+PATCH   {{rootUrl}}/api/v1/tasks/restore/6480bd03-587c-4cfd-9fcf-272ef86025da
+Authorization: Bearer {{managerAccessToken}}
+
+### Change Task status by creator
+PATCH {{rootUrl}}/api/v1/tasks/status
+Authorization: Bearer {{managerAccessToken}}
+Content-Type: application/json
+
+{
+    "task_id" : "6480bd03-587c-4cfd-9fcf-272ef86025da",
+    "status" : "FINISHED"
+}
+
+### Change Task status by member
+PATCH {{rootUrl}}/api/v1/tasks/status
+Authorization: Bearer {{isisAccessToken}}
+Content-Type: application/json
+
+{
+    "task_id" : "6480bd03-587c-4cfd-9fcf-272ef86025da",
+    "status" : "FINISHED"
+}
+
+### Get Task activity
+GET {{rootUrl}}/api/v1/activities/624d9e3d-d14c-4bdf-bcb1-8d660cca8a39
+Authorization: Bearer {{managerAccessToken}}
+
+### Delete Activity by creator
+
+DELETE {{rootUrl}}/api/v1/activities/624d9e3d-d14c-4bdf-bcb1-8d660cca8a39
+Authorization: Bearer {{managerAccessToken}}
+
+### Restore Activity by creator
+PATCH {{rootUrl}}/api/v1/activities/restore/624d9e3d-d14c-4bdf-bcb1-8d660cca8a39
+Authorization: Bearer {{managerAccessToken}}
+
+### Change Activity status by creator
+PATCH {{rootUrl}}/api/v1/activities/status
+Authorization: Bearer {{managerAccessToken}}
+Content-Type: application/json
+
+{
+    "task_activity_id" : "624d9e3d-d14c-4bdf-bcb1-8d660cca8a39",
+    "status" : "FINISHED"
+}
+
+### Change Activity status by member
+PATCH {{rootUrl}}/api/v1/activities/status
+Authorization: Bearer {{isisAccessToken}}
+Content-Type: application/json
+
+{
+    "task_activity_id" : "624d9e3d-d14c-4bdf-bcb1-8d660cca8a39",
+    "status" : "FINISHED"
+}
+
+### Add lakmilak to dashboard
+POST {{rootUrl}}/api/v1/dashboards/invite
+Authorization: Bearer {{managerAccessToken}}
+Content-Type: application/json
+
+{
+    "dashboard_id" : "9d86655e-dff2-45af-acda-66bea421e72a",
+    "user_id" : "5dd7557d-e47a-400f-8847-cceb3ff57d9c"
+}
+
+### Accept invite as Lakmilak
+PUT {{rootUrl}}/api/v1/dashboards/invite/9cd2a5c9-5e41-48f9-91c2-f62f21ef6bf3
+Authorization: Bearer {{lakmilakAccessToken}}
+
+### Try to delete task by lakmilak
+DELETE {{rootUrl}}/api/v1/tasks/6480bd03-587c-4cfd-9fcf-272ef86025da
+Authorization: Bearer {{lakmilakAccessToken}}

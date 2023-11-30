@@ -1,7 +1,8 @@
 package org.jenjetsu.com.todo.controller;
 
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
+import java.util.List;
+import java.util.Map;
+
 import org.jenjetsu.com.todo.dto.TaskReturnDTO;
 import org.jenjetsu.com.todo.dto.UserCreateDTO;
 import org.jenjetsu.com.todo.dto.UserReturnDTO;
@@ -11,13 +12,15 @@ import org.jenjetsu.com.todo.security.JwtUserIdAuthenticationToken;
 import org.jenjetsu.com.todo.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -29,7 +32,8 @@ public class UserController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public UserReturnDTO getUserById(JwtUserIdAuthenticationToken token) {
-        return UserReturnDTO.from(this.userService.readById(token.getUserId()));
+        User user = this.userService.readById(token.getUserId());
+        return UserReturnDTO.from(user);
     }
 
     @PostMapping

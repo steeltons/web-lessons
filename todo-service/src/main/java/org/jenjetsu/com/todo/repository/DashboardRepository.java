@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.jenjetsu.com.todo.model.Dashboard;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -29,4 +30,13 @@ public interface DashboardRepository extends JpaRepository<Dashboard, UUID> {
     )
     public boolean isUserInDashboard(@Param("dashboardId") UUID dashboardId,
                                      @Param("userId") UUID userId);
+
+    @Query(
+        value = "INSERT INTO t_user_dashboard(user_id, dashboard_id) " +
+                "VALUES(:userId, :dashboardId)",
+        nativeQuery = true
+    )
+    @Modifying
+    public void addUserToDashboard(@Param("dashboardId") UUID dashboardId,
+                                   @Param("userId") UUID userId);
 }

@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
+import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.CascadeType.DETACH;
 import static jakarta.persistence.CascadeType.MERGE;
 import jakarta.persistence.Column;
@@ -48,7 +49,7 @@ public class Dashboard {
     @Column(name = "created_at", nullable = false)
     private Timestamp createdAt;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY, cascade = ALL)
     @JoinTable(
         name = "t_user_dashboard",
         joinColumns = @JoinColumn(name = "dashboard_id"),

@@ -1,6 +1,11 @@
 package org.jenjetsu.com.todo.controller;
 
-import lombok.RequiredArgsConstructor;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import org.jenjetsu.com.todo.dto.ChangeStatusDTO;
 import org.jenjetsu.com.todo.dto.TaskActivityCreateDTO;
 import org.jenjetsu.com.todo.dto.TaskActivityReturnDTO;
@@ -10,13 +15,17 @@ import org.jenjetsu.com.todo.model.User;
 import org.jenjetsu.com.todo.security.JwtUserIdAuthenticationToken;
 import org.jenjetsu.com.todo.service.TaskActivityService;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/activities")
@@ -73,26 +82,23 @@ public class TaskActivityController {
 
     @PatchMapping("/status")
     @ResponseStatus(HttpStatus.OK)
-    public void changeActivityStatus(@RequestBody ChangeStatusDTO statusDTO,
-                                               JwtUserIdAuthenticationToken token) {
-        this.activityService.changeActivityStatus(statusDTO, token);
+    public void changeActivityStatus(@RequestBody ChangeStatusDTO statusDto,
+                                     JwtUserIdAuthenticationToken token) {
+        this.activityService.changeActivityStatus(statusDto);
     }
 
     @DeleteMapping("/{activityId}")
     @ResponseStatus(HttpStatus.OK)
     public Map<String, ?> deleteTaskActivity(@PathVariable("activityId") UUID activityId) {
-        TaskActivity activity = this.activityService.readById(activityId);
-        activity.setDeleted(true);
-        this.activityService.update(activity);
-        return Map.of("message", String.format("Activity %s was moved to trash bin", activity.getTaskActivityId()));
+        this.activityService.changeActivityDeleteStatus(activityId, true);
+        return Map.of("message", String.format("Activity %s was moved to trash bin", activityId));
     }
 
-    @PatchMapping("/{activityId}")
+    @PatchMapping("/restore/{activityId}")
     @ResponseStatus(HttpStatus.OK)
-    public void restoreActivity(@PathVariable("activityId") UUID activityId) {
-        TaskActivity activity = this.activityService.readById(activityId);
-        activity.setDeleted(false);
-        this.activityService.update(activity);
+    public Map<String, ?> restoreTaskActivity(@PathVariable("activityId") UUID activityId) {
+        this.activityService.changeActivityDeleteStatus(activityId, false);
+        return Map.of("message", String.format("Activity %s was restored", activityId));
     }
 
 }

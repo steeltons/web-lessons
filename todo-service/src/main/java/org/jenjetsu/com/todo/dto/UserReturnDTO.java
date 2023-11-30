@@ -1,15 +1,17 @@
 package org.jenjetsu.com.todo.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Builder;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+
 import org.jenjetsu.com.todo.model.Task;
 import org.jenjetsu.com.todo.model.TaskActivity;
 import org.jenjetsu.com.todo.model.User;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.Builder;
 
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)

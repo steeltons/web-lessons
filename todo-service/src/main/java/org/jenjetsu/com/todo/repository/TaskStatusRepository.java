@@ -1,12 +1,12 @@
 package org.jenjetsu.com.todo.repository;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import org.jenjetsu.com.todo.model.TaskStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import java.util.Optional;
-import java.util.UUID;
 
 public interface TaskStatusRepository extends JpaRepository<TaskStatus, UUID> {
 

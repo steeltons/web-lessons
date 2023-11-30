@@ -1,8 +1,9 @@
 package org.jenjetsu.com.todo.security;
 
-import lombok.RequiredArgsConstructor;
-import org.jenjetsu.com.todo.exception.EntityValidateException;
-import org.jenjetsu.com.todo.model.User;
+import java.util.Collection;
+import java.util.UUID;
+import java.util.stream.Stream;
+
 import org.jenjetsu.com.todo.service.UserService;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -13,9 +14,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.UUID;
-import java.util.stream.Stream;
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor

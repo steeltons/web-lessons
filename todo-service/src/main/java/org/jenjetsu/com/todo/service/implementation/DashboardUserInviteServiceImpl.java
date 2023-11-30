@@ -48,7 +48,7 @@ public class DashboardUserInviteServiceImpl extends SimpleJpaService<DashboardUs
                 optionalUser = this.userRep.findByUsername(receiver.getUsername());
             }
             if(optionalUser.isEmpty() && receiver.getEmail() != null) {
-                optionalUser = this.userRep.findUserByEmail(receiver.getEmail());
+                optionalUser = this.userRep.findByEmail(receiver.getEmail());
             }
             if(optionalUser.isEmpty()) {
                 throw new EntityNotFoundException(format("User with username %s and email %s not found",
@@ -76,10 +76,8 @@ public class DashboardUserInviteServiceImpl extends SimpleJpaService<DashboardUs
             if(dashboard.getIsDeleted()) {
                 throw new EntityValidateException(format("Dashboard %s marked as deleted", dashboard.getDashboardId()));
             }
-
-            dashboard.getUserList().add(invite.getReceiver());
-            this.dashboardRep.save(dashboard);
-            this.inviteRep.delete(invite);
+            this.dashboardRep.addUserToDashboard(dashboard.getDashboardId(), invite.getReceiver().getUserId());
+            this.inviteRep.deleteById(inviteId);
         } else {
             throw new EntityValidateException(format("Invite %s is expired", inviteId));
         }

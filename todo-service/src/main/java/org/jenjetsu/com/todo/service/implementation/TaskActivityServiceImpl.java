@@ -1,9 +1,14 @@
 package org.jenjetsu.com.todo.service.implementation;
 
+import static java.lang.String.format;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.jenjetsu.com.todo.dto.ChangeStatusDTO;
 import org.jenjetsu.com.todo.exception.EntityAccessDeniedException;
-import org.jenjetsu.com.todo.exception.EntityCreateException;
 import org.jenjetsu.com.todo.exception.EntityNotFoundException;
+import org.jenjetsu.com.todo.exception.EntityValidateException;
 import org.jenjetsu.com.todo.model.ActivityStatus;
 import org.jenjetsu.com.todo.model.TaskActivity;
 import org.jenjetsu.com.todo.model.User;
@@ -14,12 +19,6 @@ import org.jenjetsu.com.todo.security.JwtUserIdAuthenticationToken;
 import org.jenjetsu.com.todo.service.TaskActivityService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import static java.lang.String.format;
 
 @Service
 public class TaskActivityServiceImpl extends SimpleJpaService<TaskActivity, UUID>
@@ -43,20 +42,21 @@ public class TaskActivityServiceImpl extends SimpleJpaService<TaskActivity, UUID
         ActivityStatus activityStatus = this.statusRep.findByStatus(ActivityStatusRepository.STANDARD_STATUS)
                 .orElseThrow(() -> new EntityNotFoundException("Standard status CREATED not exists"));
         raw.setActivityStatus(activityStatus);
-        User user = raw.getUser();
-        if(user.getUserId() == null) {
-            Optional<User> optionalUser = Optional.empty();
-            String username = user.getUsername();
-            String email = user.getEmail();
-            if (username != null) {
-                optionalUser = this.userRep.findUserByUsername(username);
-            } else {
-                optionalUser = this.userRep.findUserByEmail(email);
+        UUID userId = raw.getUser().getUserId();
+        if(userId == null) {
+            Optional<UUID> optionalUserId = Optional.empty();
+            if (raw.getUser().getUsername() != null) {
+                optionalUserId = this.userRep.getUserIdByUsername(raw.getUser().getUsername());
+            } 
+            if (optionalUserId.isEmpty() && raw.getUser().getEmail() != null) {
+                optionalUserId = this.userRep.getUserIdByEmail(raw.getUser().getEmail());
             }
-            user = optionalUser.orElseThrow(() -> new
-                    EntityNotFoundException(format("User with username %s and email %s not exists", username, email)));
+            userId = optionalUserId.orElseThrow(() -> new
+                    EntityNotFoundException(format("User with username %s and email %s not exists", 
+                                                   raw.getUser().getUsername(),
+                                                   raw.getUser().getEmail())));
          }
-        raw.setUser(user);
+        raw.setUser(User.builder().userId(userId).build());
         return super.createEntity(raw);
     }
 
@@ -71,19 +71,23 @@ public class TaskActivityServiceImpl extends SimpleJpaService<TaskActivity, UUID
     }
 
     @Override
-    public void changeActivityStatus(ChangeStatusDTO statusDTO,
-                                     JwtUserIdAuthenticationToken token) {
+    public void changeActivityStatus(ChangeStatusDTO statusDTO) {
         TaskActivity taskActivity = this.readById(statusDTO.taskActivityId());
-        UUID creatorId = taskActivity.getCreatedBy().getUserId();
-        UUID userId = taskActivity.getUser().getUserId();
-        if(creatorId.equals(token.getUserId()) || userId.equals(token.getUserId())) {
-            ActivityStatus status = this.statusRep.findByStatus(statusDTO.status())
+        ActivityStatus status = this.statusRep.findByStatus(statusDTO.status())
                     .orElseThrow(() -> new EntityNotFoundException(format("Status %s not exists", statusDTO.status())));
-            taskActivity.setActivityStatus(status);
-            this.activityRep.saveAndFlush(taskActivity);
+        taskActivity.setActivityStatus(status);
+        this.activityRep.saveAndFlush(taskActivity);
+    }
+
+    @Override
+    public void changeActivityDeleteStatus(UUID activityId, boolean deleteStatus) {
+        TaskActivity activity = this.readById(activityId);
+        if(!activity.getDeleted().equals(deleteStatus)) {
+            activity.setDeleted(deleteStatus);
+            this.activityRep.saveAndFlush(activity);
         } else {
-            throw new EntityAccessDeniedException(format("Only creator or worker can change status of activity %s",
-                    statusDTO.taskActivityId().toString()));
+            throw new EntityValidateException(format("Activity %s is already ", activityId) + 
+                                              ((deleteStatus) ? "deleted" : "restored"));
         }
     }
 

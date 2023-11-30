@@ -44,7 +44,7 @@ public class Task {
     private TaskStatus status;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "t_user_task",
+            name = "t_user_dashboard_task",
             joinColumns = @JoinColumn(name = "task_id", nullable = false),
             inverseJoinColumns = @JoinColumn(name = "user_id", nullable = false)
     )
@@ -57,6 +57,9 @@ public class Task {
     private User createdBy;
     @Column(name = "created_at", nullable = false)
     private Timestamp createdAt;
+    @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {MERGE, DETACH})
+    @JoinColumn(name = "dashboard_id", columnDefinition = "UUID REFERENCES t_user_dashboard_task(dashboard_id)")
+    private Dashboard dashboard;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = ALL)
     @JoinColumn(name = "task_id")
