@@ -25,6 +25,24 @@ CREATE SCHEMA keycloak;
 
 ALTER SCHEMA keycloak OWNER TO "Stey";
 
+--
+-- Name: correct_dashboard_name_function(); Type: FUNCTION; Schema: public; Owner: Stey
+--
+
+CREATE FUNCTION public.correct_dashboard_name_function() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+IF NEW.name IS NULL THEN
+NEW.name := 'Dashboard ' || SUBSTR(new.dashboard_id::VARCHAR, 1, 13);
+end if; 
+RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION public.correct_dashboard_name_function() OWNER TO "Stey";
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -1506,17 +1524,49 @@ CREATE SEQUENCE public.t_activity_status_seq
 ALTER TABLE public.t_activity_status_seq OWNER TO "Stey";
 
 --
+-- Name: t_dashboard; Type: TABLE; Schema: public; Owner: Stey
+--
+
+CREATE TABLE public.t_dashboard (
+    dashboard_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    is_deleted boolean DEFAULT false NOT NULL,
+    is_hidden boolean DEFAULT true NOT NULL,
+    name character varying(64) DEFAULT ''::character varying,
+    creator_id uuid DEFAULT gen_random_uuid()
+);
+
+
+ALTER TABLE public.t_dashboard OWNER TO "Stey";
+
+--
+-- Name: t_dashboard_user_invite; Type: TABLE; Schema: public; Owner: Stey
+--
+
+CREATE TABLE public.t_dashboard_user_invite (
+    dashboard_user_invite_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    expiration_date timestamp(6) without time zone NOT NULL,
+    dashboard_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    inviter_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    receiver_id uuid DEFAULT gen_random_uuid() NOT NULL
+);
+
+
+ALTER TABLE public.t_dashboard_user_invite OWNER TO "Stey";
+
+--
 -- Name: t_task; Type: TABLE; Schema: public; Owner: Stey
 --
 
 CREATE TABLE public.t_task (
     task_id uuid DEFAULT gen_random_uuid() NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
+    deleted boolean DEFAULT false,
     description character varying(2048),
     title character varying(512) NOT NULL,
     creator_id uuid DEFAULT gen_random_uuid() NOT NULL,
     task_status_id integer NOT NULL,
-    deleted boolean DEFAULT false NOT NULL
+    dashboard_id uuid NOT NULL
 );
 
 
@@ -1529,13 +1579,13 @@ ALTER TABLE public.t_task OWNER TO "Stey";
 CREATE TABLE public.t_task_activity (
     task_activity_id uuid DEFAULT gen_random_uuid() NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
+    deleted boolean DEFAULT false,
     description character varying(2048),
     title character varying(512) NOT NULL,
-    creator_id uuid DEFAULT gen_random_uuid() NOT NULL,
-    task_id uuid DEFAULT gen_random_uuid() NOT NULL,
-    user_id uuid DEFAULT gen_random_uuid() NOT NULL,
     activity_status_id integer NOT NULL,
-    deleted boolean DEFAULT false NOT NULL
+    creator_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    task_id uuid NOT NULL,
+    user_id uuid NOT NULL
 );
 
 
@@ -1656,16 +1706,29 @@ CREATE TABLE public.t_user (
 ALTER TABLE public.t_user OWNER TO "Stey";
 
 --
--- Name: t_user_task; Type: TABLE; Schema: public; Owner: Stey
+-- Name: t_user_dashboard; Type: TABLE; Schema: public; Owner: Stey
 --
 
-CREATE TABLE public.t_user_task (
-    user_id uuid DEFAULT gen_random_uuid() NOT NULL,
-    task_id uuid DEFAULT gen_random_uuid() NOT NULL
+CREATE TABLE public.t_user_dashboard (
+    dashboard_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    user_id uuid DEFAULT gen_random_uuid() NOT NULL
 );
 
 
-ALTER TABLE public.t_user_task OWNER TO "Stey";
+ALTER TABLE public.t_user_dashboard OWNER TO "Stey";
+
+--
+-- Name: t_user_dashboard_task; Type: TABLE; Schema: public; Owner: Stey
+--
+
+CREATE TABLE public.t_user_dashboard_task (
+    user_id uuid NOT NULL,
+    task_id uuid NOT NULL,
+    dashboard_id uuid NOT NULL
+);
+
+
+ALTER TABLE public.t_user_dashboard_task OWNER TO "Stey";
 
 --
 -- Name: t_activity_status activity_status_id; Type: DEFAULT; Schema: public; Owner: Stey
@@ -2435,6 +2498,7 @@ d6425c4e-436c-4f8b-82ef-bf0326b1511e	\N	password	f3b7fe08-13b5-4eff-b128-7bbd768
 33c7a79e-69dd-427b-a9ba-92f6d323b899	\N	password	3d52e348-29c0-4abb-9db8-a39860c6cd1a	1699828804917	My password	{"value":"h9k+M7WiCX8c2KM8jsBN3bgp+YZPLetZojF47gkedbY=","salt":"KbF0MEenAHqANZZbXCS9YA==","additionalParameters":{}}	{"hashIterations":27500,"algorithm":"pbkdf2-sha256","additionalParameters":{}}	10
 5191dd01-dd98-4166-8631-b407d552b047	\N	password	58e7500d-888a-4a07-b04f-df3361059a65	1699829495428	My password	{"value":"9subJlZgMdrNjy6Xykcfg9d+FVEYJd+O81Trj275WhE=","salt":"xIj8YX8uqOUFjnwk//5KNg==","additionalParameters":{}}	{"hashIterations":27500,"algorithm":"pbkdf2-sha256","additionalParameters":{}}	10
 1260d7cb-4e2a-4fbc-814e-b89618f579dd	\N	password	71334133-ecd8-41d6-a11e-4f2403b34bcb	1700206821188	My password	{"value":"sdJOJrbNU6hnVHa/FDfbaWg1eKhpGs/l52tsxDtid8g=","salt":"DIcwDrIJwIZ9LFmkcFepZw==","additionalParameters":{}}	{"hashIterations":27500,"algorithm":"pbkdf2-sha256","additionalParameters":{}}	10
+cf3740aa-936b-4a40-99fd-4cf8ce037e7e	\N	password	a9a7f9ce-4298-4ee9-9158-dde196c047b1	1701345702059	My password	{"value":"tlD8USIrUDRh9UVuMeZSNxDIgH/kjMIo252fCWKh9Cc=","salt":"bYNE//X1PcT/PJw2ghKbYQ==","additionalParameters":{}}	{"hashIterations":27500,"algorithm":"pbkdf2-sha256","additionalParameters":{}}	10
 \.
 
 
@@ -3603,6 +3667,7 @@ eed19d8f-7f23-42d0-a6e0-9c2aaf58b6bb	\N	179decd9-dd21-4711-945b-86f980ee0e24	f	t
 f3b7fe08-13b5-4eff-b128-7bbd768b2d2e	test@mail.com	test@mail.com	t	t	\N	Admin	admin	4e897766-489b-43e9-be69-b608772223be	admin	1699711554905	\N	0
 58e7500d-888a-4a07-b04f-df3361059a65	nukebomb@mail.com	nukebomb@mail.com	t	t	\N	Hussein	bem Laden	4e897766-489b-43e9-be69-b608772223be	isis	1699829101723	\N	0
 71334133-ecd8-41d6-a11e-4f2403b34bcb	manager@mail.com	manager@mail.com	t	t	\N	\N	\N	4e897766-489b-43e9-be69-b608772223be	manager	1700206812779	\N	0
+a9a7f9ce-4298-4ee9-9158-dde196c047b1	tsvetstas30@gmail.com	tsvetstas30@gmail.com	f	t	\N	Stas	Tsvetkov	4e897766-489b-43e9-be69-b608772223be	lakmilak	1701345691024	\N	0
 \.
 
 
@@ -3687,6 +3752,7 @@ ee80ba20-3aa5-4a0f-81a9-0225009268cf	58e7500d-888a-4a07-b04f-df3361059a65
 cd93cb14-0a0a-49f1-8281-a456f0c90ee7	58e7500d-888a-4a07-b04f-df3361059a65
 ee80ba20-3aa5-4a0f-81a9-0225009268cf	71334133-ecd8-41d6-a11e-4f2403b34bcb
 21283b40-cf23-4a3d-8d2d-42668a21c6b8	71334133-ecd8-41d6-a11e-4f2403b34bcb
+ee80ba20-3aa5-4a0f-81a9-0225009268cf	a9a7f9ce-4298-4ee9-9158-dde196c047b1
 \.
 
 
@@ -3736,12 +3802,28 @@ COPY public.t_activity_status (activity_status_id, status) FROM stdin;
 
 
 --
+-- Data for Name: t_dashboard; Type: TABLE DATA; Schema: public; Owner: Stey
+--
+
+COPY public.t_dashboard (dashboard_id, created_at, is_deleted, is_hidden, name, creator_id) FROM stdin;
+9d86655e-dff2-45af-acda-66bea421e72a	2023-11-30 10:33:42.344502	f	t	Dashboard 9d86655e-dff2	fb517256-d8d8-4b41-8e8d-6e0b05bdea38
+\.
+
+
+--
+-- Data for Name: t_dashboard_user_invite; Type: TABLE DATA; Schema: public; Owner: Stey
+--
+
+COPY public.t_dashboard_user_invite (dashboard_user_invite_id, expiration_date, dashboard_id, inviter_id, receiver_id) FROM stdin;
+\.
+
+
+--
 -- Data for Name: t_task; Type: TABLE DATA; Schema: public; Owner: Stey
 --
 
-COPY public.t_task (task_id, created_at, description, title, creator_id, task_status_id, deleted) FROM stdin;
-69e079bc-ecd8-4330-860f-952ef2625af8	2023-11-19 12:21:16.683592	Simple design	Design implementation	7fbd3645-b714-48d9-b572-ee800fbe391f	1	f
-d4244134-8189-4eb7-8301-e8373923d922	2023-11-19 11:35:43.529846	Simple design	Design implementation	7fbd3645-b714-48d9-b572-ee800fbe391f	2	f
+COPY public.t_task (task_id, created_at, deleted, description, title, creator_id, task_status_id, dashboard_id) FROM stdin;
+6480bd03-587c-4cfd-9fcf-272ef86025da	2023-11-30 14:02:07.575153	f	\N	test-task	fb517256-d8d8-4b41-8e8d-6e0b05bdea38	2	9d86655e-dff2-45af-acda-66bea421e72a
 \.
 
 
@@ -3749,10 +3831,8 @@ d4244134-8189-4eb7-8301-e8373923d922	2023-11-19 11:35:43.529846	Simple design	De
 -- Data for Name: t_task_activity; Type: TABLE DATA; Schema: public; Owner: Stey
 --
 
-COPY public.t_task_activity (task_activity_id, created_at, description, title, creator_id, task_id, user_id, activity_status_id, deleted) FROM stdin;
-2f5c7ed0-2e74-41f4-9828-0d684cd73851	2023-11-19 13:13:33.688887	\N	first_step	7fbd3645-b714-48d9-b572-ee800fbe391f	d4244134-8189-4eb7-8301-e8373923d922	8abef164-0a5f-49b5-81fc-82915ad8a063	1	f
-d5462d5f-2ac4-48f5-b79e-aa52a6b841e7	2023-11-19 13:13:47.598899	\N	second_step	7fbd3645-b714-48d9-b572-ee800fbe391f	d4244134-8189-4eb7-8301-e8373923d922	d49ac507-5d07-4b79-81b8-e1921dd7c028	1	f
-2ddf7c89-4b44-4a85-8bba-e5a45f377436	2023-11-27 23:59:39.080213	\N	second_step	7fbd3645-b714-48d9-b572-ee800fbe391f	d4244134-8189-4eb7-8301-e8373923d922	8abef164-0a5f-49b5-81fc-82915ad8a063	1	t
+COPY public.t_task_activity (task_activity_id, created_at, deleted, description, title, activity_status_id, creator_id, task_id, user_id) FROM stdin;
+624d9e3d-d14c-4bdf-bcb1-8d660cca8a39	2023-11-30 15:34:24.482688	f	\N	test-activity	2	fb517256-d8d8-4b41-8e8d-6e0b05bdea38	6480bd03-587c-4cfd-9fcf-272ef86025da	c11cccea-df2d-45eb-aab7-4b47fc4a60e7
 \.
 
 
@@ -3787,21 +3867,30 @@ COPY public.t_task_user_list (task_id, user_id) FROM stdin;
 --
 
 COPY public.t_user (user_id, blocked, email, firstname, lastname, phone_number, username) FROM stdin;
-7fbd3645-b714-48d9-b572-ee800fbe391f	f	nukebomb@mail.com	Hussein	bem Laden	\N	isis
-23d9af80-8f2a-40da-84ec-ecb10e3289b6	f	manager@mail.com	\N	\N	\N	manager
-8abef164-0a5f-49b5-81fc-82915ad8a063	f	tsvetstas30@gmail.com	\N	\N	88005553535	stey
-d49ac507-5d07-4b79-81b8-e1921dd7c028	f	lakmi@gmail.com	\N	\N	88005553535	lakmilak
+fb517256-d8d8-4b41-8e8d-6e0b05bdea38	f	manager@mail.com	\N	\N	\N	manager
+382fce17-0911-4066-aa37-bceb5585d646	f	tcvetkov.so@dvfu.ru	Stas	Tsvetkov	\N	stey
+c11cccea-df2d-45eb-aab7-4b47fc4a60e7	f	nukebomb@mail.com	Hussein	bem Laden	\N	isis
+5dd7557d-e47a-400f-8847-cceb3ff57d9c	f	tsvetstas30@gmail.com	Stas	Tsvetkov	\N	lakmilak
 \.
 
 
 --
--- Data for Name: t_user_task; Type: TABLE DATA; Schema: public; Owner: Stey
+-- Data for Name: t_user_dashboard; Type: TABLE DATA; Schema: public; Owner: Stey
 --
 
-COPY public.t_user_task (user_id, task_id) FROM stdin;
-8abef164-0a5f-49b5-81fc-82915ad8a063	d4244134-8189-4eb7-8301-e8373923d922
-23d9af80-8f2a-40da-84ec-ecb10e3289b6	d4244134-8189-4eb7-8301-e8373923d922
-d49ac507-5d07-4b79-81b8-e1921dd7c028	d4244134-8189-4eb7-8301-e8373923d922
+COPY public.t_user_dashboard (dashboard_id, user_id) FROM stdin;
+9d86655e-dff2-45af-acda-66bea421e72a	fb517256-d8d8-4b41-8e8d-6e0b05bdea38
+9d86655e-dff2-45af-acda-66bea421e72a	c11cccea-df2d-45eb-aab7-4b47fc4a60e7
+9d86655e-dff2-45af-acda-66bea421e72a	5dd7557d-e47a-400f-8847-cceb3ff57d9c
+\.
+
+
+--
+-- Data for Name: t_user_dashboard_task; Type: TABLE DATA; Schema: public; Owner: Stey
+--
+
+COPY public.t_user_dashboard_task (user_id, task_id, dashboard_id) FROM stdin;
+c11cccea-df2d-45eb-aab7-4b47fc4a60e7	6480bd03-587c-4cfd-9fcf-272ef86025da	9d86655e-dff2-45af-acda-66bea421e72a
 \.
 
 
@@ -3823,7 +3912,7 @@ SELECT pg_catalog.setval('public.t_activity_status_seq', 1, false);
 -- Name: t_task_comment_task_comment_id_seq; Type: SEQUENCE SET; Schema: public; Owner: Stey
 --
 
-SELECT pg_catalog.setval('public.t_task_comment_task_comment_id_seq', 1, true);
+SELECT pg_catalog.setval('public.t_task_comment_task_comment_id_seq', 1, false);
 
 
 --
@@ -4689,11 +4778,19 @@ ALTER TABLE ONLY public.t_activity_status
 
 
 --
--- Name: t_activity_status t_activity_status_status_key; Type: CONSTRAINT; Schema: public; Owner: Stey
+-- Name: t_dashboard t_dashboard_pkey; Type: CONSTRAINT; Schema: public; Owner: Stey
 --
 
-ALTER TABLE ONLY public.t_activity_status
-    ADD CONSTRAINT t_activity_status_status_key UNIQUE (status);
+ALTER TABLE ONLY public.t_dashboard
+    ADD CONSTRAINT t_dashboard_pkey PRIMARY KEY (dashboard_id);
+
+
+--
+-- Name: t_dashboard_user_invite t_dashboard_user_invite_pkey; Type: CONSTRAINT; Schema: public; Owner: Stey
+--
+
+ALTER TABLE ONLY public.t_dashboard_user_invite
+    ADD CONSTRAINT t_dashboard_user_invite_pkey PRIMARY KEY (dashboard_user_invite_id);
 
 
 --
@@ -4729,19 +4826,19 @@ ALTER TABLE ONLY public.t_task_status
 
 
 --
+-- Name: t_user_dashboard_task t_user_dashboard_task_user_id_task_id_key; Type: CONSTRAINT; Schema: public; Owner: Stey
+--
+
+ALTER TABLE ONLY public.t_user_dashboard_task
+    ADD CONSTRAINT t_user_dashboard_task_user_id_task_id_key UNIQUE (user_id, task_id);
+
+
+--
 -- Name: t_user t_user_pkey; Type: CONSTRAINT; Schema: public; Owner: Stey
 --
 
 ALTER TABLE ONLY public.t_user
     ADD CONSTRAINT t_user_pkey PRIMARY KEY (user_id);
-
-
---
--- Name: t_user_task t_user_task_pkey; Type: CONSTRAINT; Schema: public; Owner: Stey
---
-
-ALTER TABLE ONLY public.t_user_task
-    ADD CONSTRAINT t_user_task_pkey PRIMARY KEY (user_id, task_id);
 
 
 --
@@ -4766,6 +4863,22 @@ ALTER TABLE ONLY public.t_user
 
 ALTER TABLE ONLY public.t_user
     ADD CONSTRAINT uk_jhib4legehrm4yscx9t3lirqi UNIQUE (username);
+
+
+--
+-- Name: t_activity_status uk_rnvq9cb5qv94qjxrxafscxdij; Type: CONSTRAINT; Schema: public; Owner: Stey
+--
+
+ALTER TABLE ONLY public.t_activity_status
+    ADD CONSTRAINT uk_rnvq9cb5qv94qjxrxafscxdij UNIQUE (status);
+
+
+--
+-- Name: t_user_dashboard unique_pair; Type: CONSTRAINT; Schema: public; Owner: Stey
+--
+
+ALTER TABLE ONLY public.t_user_dashboard
+    ADD CONSTRAINT unique_pair UNIQUE (user_id, dashboard_id);
 
 
 --
@@ -5347,6 +5460,13 @@ CREATE INDEX idx_usr_fed_prv_realm ON keycloak.user_federation_provider USING bt
 --
 
 CREATE INDEX idx_web_orig_client ON keycloak.web_origins USING btree (client_id);
+
+
+--
+-- Name: t_dashboard correct_dashboard_name; Type: TRIGGER; Schema: public; Owner: Stey
+--
+
+CREATE TRIGGER correct_dashboard_name BEFORE INSERT ON public.t_dashboard FOR EACH ROW EXECUTE FUNCTION public.correct_dashboard_name_function();
 
 
 --
@@ -5942,6 +6062,38 @@ ALTER TABLE ONLY keycloak.identity_provider_config
 
 
 --
+-- Name: t_dashboard_user_invite fk3sx1b6cail2acyktwancqec67; Type: FK CONSTRAINT; Schema: public; Owner: Stey
+--
+
+ALTER TABLE ONLY public.t_dashboard_user_invite
+    ADD CONSTRAINT fk3sx1b6cail2acyktwancqec67 FOREIGN KEY (dashboard_id) REFERENCES public.t_dashboard(dashboard_id);
+
+
+--
+-- Name: t_dashboard_user_invite fk64nl2xsvdnlaokbxuixvfncua; Type: FK CONSTRAINT; Schema: public; Owner: Stey
+--
+
+ALTER TABLE ONLY public.t_dashboard_user_invite
+    ADD CONSTRAINT fk64nl2xsvdnlaokbxuixvfncua FOREIGN KEY (receiver_id) REFERENCES public.t_user(user_id);
+
+
+--
+-- Name: t_task fk72ag4al7giy7yvff0rvcpnsp0; Type: FK CONSTRAINT; Schema: public; Owner: Stey
+--
+
+ALTER TABLE ONLY public.t_task
+    ADD CONSTRAINT fk72ag4al7giy7yvff0rvcpnsp0 FOREIGN KEY (task_status_id) REFERENCES public.t_task_status(task_status_id);
+
+
+--
+-- Name: t_user_dashboard fk8p0tseklikftx7l9015k5vl4g; Type: FK CONSTRAINT; Schema: public; Owner: Stey
+--
+
+ALTER TABLE ONLY public.t_user_dashboard
+    ADD CONSTRAINT fk8p0tseklikftx7l9015k5vl4g FOREIGN KEY (dashboard_id) REFERENCES public.t_dashboard(dashboard_id);
+
+
+--
 -- Name: t_task_comment fk9eilywwv0cvv2qrvl417felp5; Type: FK CONSTRAINT; Schema: public; Owner: Stey
 --
 
@@ -5950,19 +6102,19 @@ ALTER TABLE ONLY public.t_task_comment
 
 
 --
--- Name: t_task_activity fk_user_task_activity; Type: FK CONSTRAINT; Schema: public; Owner: Stey
+-- Name: t_dashboard_user_invite fkddekgvoirxtw8rn87cx37l0y4; Type: FK CONSTRAINT; Schema: public; Owner: Stey
 --
 
-ALTER TABLE ONLY public.t_task_activity
-    ADD CONSTRAINT fk_user_task_activity FOREIGN KEY (user_id, task_id) REFERENCES public.t_user_task(user_id, task_id);
+ALTER TABLE ONLY public.t_dashboard_user_invite
+    ADD CONSTRAINT fkddekgvoirxtw8rn87cx37l0y4 FOREIGN KEY (inviter_id) REFERENCES public.t_user(user_id);
 
 
 --
--- Name: t_task_activity fkdpjp9d62p91qh0ccqukl77fqd; Type: FK CONSTRAINT; Schema: public; Owner: Stey
+-- Name: t_user_dashboard fkft6dov9vbr657tmwuwvqtjvkj; Type: FK CONSTRAINT; Schema: public; Owner: Stey
 --
 
-ALTER TABLE ONLY public.t_task_activity
-    ADD CONSTRAINT fkdpjp9d62p91qh0ccqukl77fqd FOREIGN KEY (creator_id) REFERENCES public.t_user(user_id);
+ALTER TABLE ONLY public.t_user_dashboard
+    ADD CONSTRAINT fkft6dov9vbr657tmwuwvqtjvkj FOREIGN KEY (user_id) REFERENCES public.t_user(user_id);
 
 
 --
@@ -5982,35 +6134,43 @@ ALTER TABLE ONLY public.t_task
 
 
 --
--- Name: t_user_task fkkd3rhw221rqxq7v0xeaduaq4y; Type: FK CONSTRAINT; Schema: public; Owner: Stey
+-- Name: t_dashboard fkt94mq9ev6ox5v021j6pwphoxu; Type: FK CONSTRAINT; Schema: public; Owner: Stey
 --
 
-ALTER TABLE ONLY public.t_user_task
-    ADD CONSTRAINT fkkd3rhw221rqxq7v0xeaduaq4y FOREIGN KEY (task_id) REFERENCES public.t_task(task_id);
-
-
---
--- Name: t_task fko1dvc9tmyvsa69keqckvgldxr; Type: FK CONSTRAINT; Schema: public; Owner: Stey
---
-
-ALTER TABLE ONLY public.t_task
-    ADD CONSTRAINT fko1dvc9tmyvsa69keqckvgldxr FOREIGN KEY (task_status_id) REFERENCES public.t_task_status(task_status_id);
+ALTER TABLE ONLY public.t_dashboard
+    ADD CONSTRAINT fkt94mq9ev6ox5v021j6pwphoxu FOREIGN KEY (creator_id) REFERENCES public.t_user(user_id);
 
 
 --
--- Name: t_user_task fkt34ftkfh42se6l1oqs8nxq76j; Type: FK CONSTRAINT; Schema: public; Owner: Stey
---
-
-ALTER TABLE ONLY public.t_user_task
-    ADD CONSTRAINT fkt34ftkfh42se6l1oqs8nxq76j FOREIGN KEY (user_id) REFERENCES public.t_user(user_id);
-
-
---
--- Name: t_task_activity t_task_activity_activity_status_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: Stey
+-- Name: t_task_activity foreign_pair; Type: FK CONSTRAINT; Schema: public; Owner: Stey
 --
 
 ALTER TABLE ONLY public.t_task_activity
-    ADD CONSTRAINT t_task_activity_activity_status_id_fkey FOREIGN KEY (activity_status_id) REFERENCES public.t_activity_status(activity_status_id);
+    ADD CONSTRAINT foreign_pair FOREIGN KEY (task_id, user_id) REFERENCES public.t_user_dashboard_task(task_id, user_id);
+
+
+--
+-- Name: t_task t_task_dashboard_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: Stey
+--
+
+ALTER TABLE ONLY public.t_task
+    ADD CONSTRAINT t_task_dashboard_id_fkey FOREIGN KEY (dashboard_id) REFERENCES public.t_dashboard(dashboard_id);
+
+
+--
+-- Name: t_user_dashboard_task t_user_dashboard_task_task_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: Stey
+--
+
+ALTER TABLE ONLY public.t_user_dashboard_task
+    ADD CONSTRAINT t_user_dashboard_task_task_id_fkey FOREIGN KEY (task_id) REFERENCES public.t_task(task_id);
+
+
+--
+-- Name: t_user_dashboard_task t_user_dashboard_task_user_id_dashboard_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: Stey
+--
+
+ALTER TABLE ONLY public.t_user_dashboard_task
+    ADD CONSTRAINT t_user_dashboard_task_user_id_dashboard_id_fkey FOREIGN KEY (user_id, dashboard_id) REFERENCES public.t_user_dashboard(user_id, dashboard_id);
 
 
 --
