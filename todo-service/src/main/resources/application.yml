@@ -22,11 +22,11 @@ spring:
     url: jdbc:postgresql://localhost:5001/jenjetsu_database?characterEncoding=utf8
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate
     show-sql: true
     properties:
       hibernate:
-        format-sql: true
+        format_sql: true
   security:
     oauth2:
       resourceserver:

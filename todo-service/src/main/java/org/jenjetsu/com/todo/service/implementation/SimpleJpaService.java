@@ -1,20 +1,22 @@
 package org.jenjetsu.com.todo.service.implementation;
 
-import org.jenjetsu.com.todo.exception.*;
-import org.jenjetsu.com.todo.service.CRUDService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import java.io.Serializable;
+import static java.lang.String.format;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static java.lang.String.format;
+import org.jenjetsu.com.todo.exception.EntityAccessDeniedException;
+import org.jenjetsu.com.todo.exception.EntityCreateException;
+import org.jenjetsu.com.todo.exception.EntityDeleteException;
+import org.jenjetsu.com.todo.exception.EntityModifyException;
+import org.jenjetsu.com.todo.exception.EntityNotFoundException;
+import org.jenjetsu.com.todo.exception.EntityValidateException;
+import org.jenjetsu.com.todo.service.CRUDService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 public class SimpleJpaService<E, ID extends Serializable> implements CRUDService<E, ID> {
 
@@ -33,6 +35,11 @@ public class SimpleJpaService<E, ID extends Serializable> implements CRUDService
         try {
             return createEntity(raw);
         } catch (Exception e) {
+            if (e instanceof EntityValidateException ||
+                e instanceof EntityNotFoundException ||
+                e instanceof EntityAccessDeniedException) {
+                    throw e;
+            }
             throw new EntityCreateException(format("Impossible to save Entity %s", clazz.getSimpleName()), e);
         }
     }

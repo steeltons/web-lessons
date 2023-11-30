@@ -1,13 +1,19 @@
 package org.jenjetsu.com.todo.controller;
 
-import lombok.SneakyThrows;
-import org.jenjetsu.com.todo.exception.*;
+import org.jenjetsu.com.todo.exception.EntityAccessDeniedException;
+import org.jenjetsu.com.todo.exception.EntityCreateException;
+import org.jenjetsu.com.todo.exception.EntityDeleteException;
+import org.jenjetsu.com.todo.exception.EntityModifyException;
+import org.jenjetsu.com.todo.exception.EntityNotFoundException;
+import org.jenjetsu.com.todo.exception.EntityValidateException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import lombok.SneakyThrows;
 
 @ControllerAdvice
 public class ControllerExceptionAdvice {
@@ -48,4 +54,13 @@ public class ControllerExceptionAdvice {
                 .body(responseBody.toString());
     }
 
+    @ExceptionHandler(value = EntityAccessDeniedException.class)
+    @SneakyThrows
+    public ResponseEntity<String> handleEntityAccessDenidedException(EntityAccessDeniedException e) {
+        JSONObject responseBody = new JSONObject();
+        responseBody.put(this.RESPONSE_KEY, e.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(responseBody.toString());
+    }
 }
