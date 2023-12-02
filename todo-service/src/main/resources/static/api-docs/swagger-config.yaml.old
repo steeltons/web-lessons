@@ -52,12 +52,6 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         '403':
           $ref: '#/components/responses/PermissionDenided'
-        '500':
-          description: Error while create new user
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EntityOperationInternalError'
   /users/todo:
     get:
       security: 
@@ -82,185 +76,7 @@ paths:
                       $ref: '#/components/schemas/TaskReturnDTO'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
-          
-  /dashboards:
-    post:
-      security: 
-        - bearerAuth: []
-      summary: Cretate new Dashboard
-      tags:
-        - Dashboards
-      operationId: createDashboard
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DashboardCreateDTO'
-      responses:
-        '201':
-          description: Successful create dashboard
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - dashboard_id
-                properties:
-                  dashboard_id:
-                    type: string
-                    format: uuid
-                    example: 2a871b6d-030c-4752-a181-5843c905d6a4
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '500':
-          description: Error while create dashboard
-          content: 
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EntityOperationInternalError'
-  /dashboards/{dashboard_id}:
-    parameters:
-      - name: dashboard_id
-        required: true
-        in: path
-        schema:
-          type: string
-          format: uuid
-          example: 2a871b6d-030c-4752-a181-5843c905d6a4
-    get:
-      security: 
-        - bearerAuth: []
-      summary: Get information about dashboard by id
-      tags:
-        - Dashboards
-      operationId: getDashboardById
-      responses:
-        '200':
-          description: Successful obtain dashboard
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DashboardReturnDTO'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '404':
-          description: Try to get virtual or hidden dashboard
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EntityNotFoundError'
-  /dashboards/invite:
-    post:
-      security: 
-        - bearerAuth: []
-      summary: Invite another user to dashboard
-      tags:
-        - Dashboards
-      operationId: inviteUserToDashboard
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema: 
-              $ref: '#/components/schemas/DashboardUserInviteDTO'
-      responses:
-        '201':
-          description: Successful user invite
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - message
-                properties:
-                  message:
-                    type: string
-                    example: User with id 555eceb7-331e-45f6-bf5c-fde18362eca1 was invited to dashboard
-        '400':
-          description: Invite user withou filling user_id, username and email
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - error_message
-                properties:
-                  error_message:
-                    type: string
-                    example: Request body doesn't contains user_id, username or email
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          description: Try to invite to dashboard by not dashboard owner
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserNotEntityOwnerError'
-        '404':
-          description: Try to invite to virtual dashboard or virtual user
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EntityNotFoundError'
-        '500':
-          description: Error while invite user
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EntityOperationInternalError'
-  /dashboards/invite/{invite_id}:
-    parameters:
-      - name: invite_id
-        required: true
-        in: path
-        schema:
-          type: string
-          format: uuid
-          example: ab922b82-4e83-4e98-9b93-b7657ae455c6
-    put:
-      security: 
-        - bearerAuth: []
-      summary: Accept invite to dashboard
-      tags:
-        - Dashboards
-      operationId: acceptDashboardInvite
-      responses:
-        '200':
-          $ref: '#/components/responses/OkResponse'
-        '400':
-          description: Try to accept expired invite or deleted dashboard
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - error_message
-                properties:
-                  error_message:
-                    type: string
-                    example: Dashboard 2a871b6d-030c-4752-a181-5843c905d6a4 is expired
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          description: Try to accept invite by not receiver
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserNotEntityOwnerError'
-        '404':
-          description: Try to accept virtual ivite
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EntityNotFoundError'
-        '500':
-          description: Error while accepting invite
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EntityOperationInternalError'
-
+  
   /tasks:
     get:
       security: 
@@ -307,24 +123,6 @@ paths:
                     example: 9237dde5-3a9a-42d7-be9e-9a63f30da13d
         '401':
           $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          description: User is not dashboard creator
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - error_message
-                properties:
-                  error_message:
-                    type: string
-                    example: User 555eceb7-331e-45f6-bf5c-fde18362eca1 is not dashboard 2a871b6d-030c-4752-a181-5843c905d6a4 creator
-        '500': 
-          description: Error creating task
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EntityOperationInternalError'
   /tasks/{task_id}:
     parameters:
       - name: task_id
@@ -402,19 +200,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserNotEntityOwnerError'
+                $ref: '#/components/schemas/TaskModyfyByNotCreatorError'
         '404':
           description: Try to get not existing task
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TaskNotFoundError'
-        '500':
-          description: Error deleting task
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EntityOperationInternalError'
   /tasks/status:
     patch:
       security: 
@@ -451,7 +243,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserNotTaskMemberError'
+                type: object
+                required:
+                  - error_message
+                properties:
+                  error_message:
+                    type: string
+                    example: Only creator or worker can change status of task 9237dde5-3a9a-42d7-be9e-9a63f30da13d
         '404':
           description: Try to change status of not existing task or set not existing status
           content:
@@ -464,12 +262,6 @@ paths:
                   error_message:
                     type: string
                     example: Status ON_INSPECTION is not exists
-        '500':
-          description: Error change task status
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EntityOperationInternalError'
   /tasks/add-user:
     post:
       security: 
@@ -506,27 +298,38 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/CreatedResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          description: Try to link user to task by not creator or user is not dashboard member
+        '400':
+          description: Try to link linked user
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserNotEntityOwnerError'
-                # $ref: '#/components/schemas/UserIsNotDahsboardMember'
+                type: object
+                required:
+                  - error_message
+                properties:
+                  error_message:
+                    type: string
+                    example: User stey with id 555eceb7-331e-45f6-bf5c-fde18362eca1 is already linked to this task
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Try to link user to task by not creator
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskModyfyByNotCreatorError'
         '404':
           description: Try to linked not existing user or not existing task
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EntityNotFoundError'
-        '500':
-          description: Error add user
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EntityOperationInternalError'
+                type: object
+                required: 
+                  - error_message
+                properties:
+                  error_message:
+                    type: string
+                    example: User with 555eceb7-331e-45f6-bf5c-fde18362eca1, username stey, email tcvetkov.so@dvfu.ru is not exists
   /tasks/created-by-my:
     get:
       security: 
@@ -566,24 +369,12 @@ paths:
           $ref: '#/components/responses/CreatedResponse'
         '401': 
           $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          description: Try to get task byn not task's dashboard member
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserIsNotDahsboardMember'
         '404':
           description: Try to get not existing task
           content:
             application/json:
               schema: 
-                $ref: '#/components/schemas/EntityNotFoundError'
-        '500':
-          description: Error take task
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EntityOperationInternalError'
+                $ref: '#/components/schemas/TaskNotFoundError'
   /tasks/restore/{task_id}:
     parameters:
       - name: task_id
@@ -623,19 +414,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserNotEntityOwnerError'
+                $ref: '#/components/schemas/TaskModyfyByNotCreatorError'
         '404':
           description: Try to get not existing task
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EntityNotFoundError'
-        '500':
-          description: Error delete task
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EntityOperationInternalError'
+                $ref: '#/components/schemas/TaskNotFoundError'
       
 
   /activities:
@@ -682,24 +467,18 @@ paths:
                     type: string
                     format: uuid
                     example: 9237dde5-3a9a-42d7-be9e-9a63f30da13d
-        '403':
-          description: Try to create task actiovity by not task creator
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserNotEntityOwnerError'
-        '404':
-          description: Try to add activvity to virtual task
-          content:
-            appliaction/json:
-              schema:
-                $ref: '#/components/schemas/EntityNotFoundError'
         '500':
-          description: Error create activity
+          description: Error in saving entity
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EntityOperationInternalError'
+                type: object
+                required: 
+                  - error_message
+                properties:
+                  error_message:
+                    type: string
+                    example: Impossible to save Entity TaskActivity
   /activities/{activity_id}:
     get:
       security:
@@ -731,7 +510,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EntityNotFoundError'
+                type: object
+                required:
+                  - code
+                  - message
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: Entity TaskActivity with id 555eceb7-331e-45f6-bf5c-fde18362eca1 not exists
     delete:
       security: 
         - bearerAuth: []
@@ -761,26 +550,31 @@ paths:
                   message:
                     type: string
                     example: Activity 555eceb7-331e-45f6-bf5c-fde18362eca1 was moved to trash bin
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: Entity not exists 
+          content:
+            application/json:
+              schema:
+                type: object
+                required: 
+                  - error_message
+                properties:
+                  error_message:
+                    type: string
+                    example: Impossible to find entity TaskActivity with id 555eceb7-331e-45f6-bf5c-fde18362eca1
         '403':
           description: User is not activity creator
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserNotEntityOwnerError'
-        '404':
-          description: Try to get virtual activity
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EntityNotFoundError'
-        '500':
-          description: Error while delete activity
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EntityOperationInternalError'
+                type: object
+                required: 
+                  - error_message
+                properties:
+                  error_message:
+                    type: string
+                    example: Only creator can modify activity 555eceb7-331e-45f6-bf5c-fde18362eca1
+                    
   /activities/created-by-my:
     get:
       security: 
@@ -853,137 +647,6 @@ paths:
                   error_message:
                     type: string
                     example: Impossible to find entity ActivityStatus with name ON_INSPECTION
-        '500':
-          description: Error while change activity status
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EntityOperationInternalError'
-                    
-  /comments:
-    post:
-      security: 
-        - bearerAuth: []
-      summary: Add comment to task
-      tags:
-        - Comments
-      operationId: createComment
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TaskCommentCreateDTO'
-      responses:
-        '201':
-          description: Successful comment create
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - comment_id
-                properties:
-                  comment_id:
-                    type: string
-                    example: 1
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          description: Try to create comment by not task member
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserNotTaskMemberError'
-        '404':
-          description: Try create comment to virtual task
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TaskNotFoundError'
-        '500':
-          description: Error to create comment
-          content:
-            applicatio/json:
-              schema:
-                $ref: '#/components/schemas/EntityOperationInternalError'
-  /comments/{comment_id}:
-    parameters:
-      - name: comment_id
-        required: true
-        in: path
-        description: Task comment identifier
-        schema:
-          type: integer
-          example: 1
-    get:
-      security: 
-        - bearerAuth: []
-      summary: Get comment by id
-      tags:
-        - Comments
-      operationId: getCommentById
-      responses:
-        '200':
-          description: Successful comment getting
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TaskCommentReturnDTO'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          description: Try to get comment by not task member
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserNotTaskMemberError'
-        '404':
-          description: Try to get not existing comment
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TaskCommentNotFoundError'
-    delete:
-      security: 
-        - bearerAuth: []
-      summary: Delete commentary by creator
-      tags:
-        - Comments
-      operationId: deleteCommentById
-      responses:
-        '200':
-          description: Successful delete comment
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - message
-                properties:
-                  message:
-                    type: string
-                    example: Comment 1 was deleted
-        '401': 
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          description: Try to delete comment by not creator
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserNotEntityOwnerError'
-        '404':
-          description: Try to delete virtual comment
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EntityNotFoundError'
-        '500':
-          description: Error while delete comment
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EntityOperationInternalError'
         
 components:
   securitySchemes:
@@ -1019,7 +682,6 @@ components:
       type: object
       required: 
         - title
-        - dashboard_id
       properties:
         title:
           type: string
@@ -1027,10 +689,6 @@ components:
         description:
           type: string
           example: Some words about how to make our app better and get new audience
-        dashboard_id:
-          type: string
-          format: uuid
-          example: 2a871b6d-030c-4752-a181-5843c905d6a4
     TaskActivityCreateDTO:
       type: object
       required: 
@@ -1058,28 +716,6 @@ components:
         description:
           type: string
           example: Make a survey among grannies about how our phone app helps in routine and what they want to see in future updates
-    TaskCommentCreateDTO:
-      type: object
-      required:
-        - task_id
-        - content
-      properties:
-        task_id:
-          type: string
-          format: uuid
-          example: 9237dde5-3a9a-42d7-be9e-9a63f30da13d
-        content:
-          type: string
-          example: You are the best
-    DashboardCreateDTO:
-      type: object
-      properties:
-        name:
-          type: string
-          example: My project dashboard
-        is_hidden:
-          type: boolean
-          example: true
   
   # Getting DTO
     UserReturnDTO:
@@ -1148,6 +784,7 @@ components:
         created_at:
           type: string
           format: date
+          # pattern: "YYYY-MM-DD HH:mm:ss"
           description: Date and time of creating activity
           example: "2023-12-15 04:00:00"
         activities:
@@ -1206,84 +843,6 @@ components:
           # pattern: "YYYY-MM-DD HH:mm:ss"
           description: Date and time of creating activity
           example: "2023-12-15 04:00:00"
-    TaskCommentReturnDTO:
-      type: object
-      required:
-        - task_comment_id
-        - content
-        - uploaded_at
-      properties:
-        task_comment_id:
-          type: integer
-          example: 1
-        content:
-          type: string
-          example: You are best
-        task_id:
-          type: string
-          format: uuid
-          example: 9237dde5-3a9a-42d7-be9e-9a63f30da13d
-        uploaded_by:
-          type: string
-          format: uuid
-          example: 555eceb7-331e-45f6-bf5c-fde18362eca1
-        uploaded_at:
-          type: string
-          format: date
-          example: "2023-12-15 04:00:00"
-    DashboardReturnDTO:
-      type: object
-      required:
-        - dashboard_id
-        - name
-        - creator_id
-        - created_at
-        - user_amount
-        - task_amount
-      properties:
-        dashboard_id:
-          type: string
-          format: uuid
-          example: 2a871b6d-030c-4752-a181-5843c905d6a4
-        name:
-          type: string
-          example: Dashboard 2a871b6d-030c
-        creator_id:
-          type: string
-          format: uuid
-          example: 555eceb7-331e-45f6-bf5c-fde18362eca1
-        created_at:
-          type: string
-          format: date
-          example: "2023-12-15 04:00:00"
-        user_amount:
-          type: integer
-          example: 1
-        task_amount:
-          type: integer
-          example: 1
-          
-  # Other DTO
-    DashboardUserInviteDTO:
-      type: object
-      required:
-        - dashboard_id
-      properties:
-        dashboard_id:
-          type: string
-          format: uuid
-          example: 2a871b6d-030c-4752-a181-5843c905d6a4
-        user_id:
-          type: string
-          format: uuid
-          example: 555eceb7-331e-45f6-bf5c-fde18362eca1
-        username:
-          type: string
-          example: stey
-        email:
-          type: string
-          format: email
-          example: tcvetkov.so@dvfu.ru
         
   # Arrays
     TaskActivityReturnDTOList:
@@ -1304,54 +863,14 @@ components:
         error_message:
           type: string
           example: Entity Task with id 9237dde5-3a9a-42d7-be9e-9a63f30da13d is not exists 
-    TaskCommentNotFoundError:
+    TaskModyfyByNotCreatorError:
       type: object
-      required:
+      required: 
         - error_message
       properties:
         error_message:
           type: string
-          example: Entity comment with id 1 not exists
-    UserNotTaskMemberError:
-      type: object
-      required:
-        - error_message
-      properties:
-        error_message:
-          type: string
-          example: User 555eceb7-331e-45f6-bf5c-fde18362eca1 is not task 9237dde5-3a9a-42d7-be9e-9a63f30da13d member
-    UserIsNotDahsboardMember:
-      type: object
-      required:
-        - error_message
-      properties:
-        error_message:
-          type: string
-          example: User 555eceb7-331e-45f6-bf5c-fde18362eca1 is not dashboard 2a871b6d-030c-4752-a181-5843c905d6a4 member
-    EntityOperationInternalError:
-      type: object
-      required:
-        - error_message
-      properties:
-        error_message:
-          type: string
-          example: "Impossible to <create|save|delete> entity <entity_name>. Error message: some error"
-    UserNotEntityOwnerError:
-      type: object
-      required:
-        - error_message
-      properties:
-        error_message:
-          type: string
-          example: User 555eceb7-331e-45f6-bf5c-fde18362eca1 is not <Entity> owner
-    EntityNotFoundError:
-      type: object
-      required:
-        - error_message
-      properties:
-        error_message:
-          type: string
-          example: Entity <entity_name> with id <entity_id> not exists
+          example: Only creator can modify task 9237dde5-3a9a-42d7-be9e-9a63f30da13d
   # Error Entities
   responses:
     OkResponse:

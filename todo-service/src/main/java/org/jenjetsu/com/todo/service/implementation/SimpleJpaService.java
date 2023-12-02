@@ -13,21 +13,20 @@ import org.jenjetsu.com.todo.exception.EntityModifyException;
 import org.jenjetsu.com.todo.exception.EntityNotFoundException;
 import org.jenjetsu.com.todo.exception.EntityValidateException;
 import org.jenjetsu.com.todo.service.CRUDService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 public class SimpleJpaService<E, ID extends Serializable> implements CRUDService<E, ID> {
 
-    @Autowired
     private JpaRepository<E, ID> jpaRepository;
     private final Class<? extends E> clazz;
 
-    public SimpleJpaService(Class<? extends E> mappedClass) {
+    public SimpleJpaService(Class<? extends E> mappedClass, 
+                            JpaRepository<E, ID> jpaRepository) {
         this.clazz = mappedClass;
+        this.jpaRepository = jpaRepository;
     }
-
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)

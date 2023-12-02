@@ -39,4 +39,5 @@ public interface DashboardRepository extends JpaRepository<Dashboard, UUID> {
     @Modifying
     public void addUserToDashboard(@Param("dashboardId") UUID dashboardId,
                                    @Param("userId") UUID userId);
+
 }

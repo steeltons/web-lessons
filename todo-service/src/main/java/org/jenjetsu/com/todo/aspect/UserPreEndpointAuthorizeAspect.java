@@ -66,7 +66,7 @@ public class UserPreEndpointAuthorizeAspect {
             throw new EntityNotFoundException(format("Dashboard with id %s not exists", createDto.dashboardId()));
         }
         if(!this.dashboardRep.isUserInDashboard(createDto.dashboardId(), token.getUserId())) {
-            throw new EntityAccessDeniedException(format("Only memebers of dashboard %s can add tasks",
+            throw new EntityAccessDeniedException(format("User is not dashboard %s member",
                                                          createDto.dashboardId()
                                                         ));
         }

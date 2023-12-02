@@ -31,7 +31,7 @@ public class TaskActivityServiceImpl extends SimpleJpaService<TaskActivity, UUID
     public TaskActivityServiceImpl(TaskActivityRepository activityRep,
                                    ActivityStatusRepository statusRep,
                                    UserRepository userRep) {
-        super(TaskActivity.class);
+        super(TaskActivity.class, activityRep);
         this.activityRep = activityRep;
         this.statusRep = statusRep;
         this.userRep = userRep;

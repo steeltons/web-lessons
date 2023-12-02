@@ -30,7 +30,7 @@ public class DashboardUserInviteServiceImpl extends SimpleJpaService<DashboardUs
     public DashboardUserInviteServiceImpl(DashboardUserInviteRepository inviteRep,
                                           UserRepository userRep,
                                           DashboardRepository dashboardRep) {
-        super(DashboardUserInvite.class);
+        super(DashboardUserInvite.class, inviteRep);
         this.inviteRep = inviteRep;
         this.userRep = userRep;
         this.dashboardRep = dashboardRep;

@@ -25,7 +25,7 @@ public class UserServiceImpl extends SimpleJpaService<User, UUID> implements Use
 
     public UserServiceImpl(UserRepository userRep,
                            TaskRepository taskRep) {
-        super(User.class);
+        super(User.class, userRep);
         this.userRep = userRep;
         this.taskRep = taskRep;
     }

@@ -1,16 +1,29 @@
 package org.jenjetsu.com.todo.model;
 
-import jakarta.persistence.*;
-import lombok.*;
-
 import java.sql.Timestamp;
 
-import static jakarta.persistence.CascadeType.*;
+import static jakarta.persistence.CascadeType.DETACH;
+import static jakarta.persistence.CascadeType.MERGE;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Getter @Setter @ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "t_task_comment")
+@Builder
 public class TaskComment {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

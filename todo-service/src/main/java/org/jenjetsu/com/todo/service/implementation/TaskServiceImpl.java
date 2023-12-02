@@ -31,7 +31,7 @@ public class TaskServiceImpl extends SimpleJpaService<Task, UUID> implements Tas
                            TaskStatusRepository taskStatusRep,
                            UserRepository userRep,
                            DashboardRepository dashboardRep) {
-        super(Task.class);
+        super(Task.class, taskRep);
         this.taskRep = taskRep;
         this.taskStatusRep = taskStatusRep;
         this.userRep = userRep;

@@ -14,7 +14,7 @@ public class DashboardServiceImpl extends SimpleJpaService<Dashboard, UUID>
     private DashboardRepository dashboardRep;
 
     public DashboardServiceImpl(DashboardRepository dashboardRep) {
-        super(Dashboard.class);
+        super(Dashboard.class, dashboardRep);
         this.dashboardRep = dashboardRep;
     }
 }
