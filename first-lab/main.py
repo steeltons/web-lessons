@@ -96,75 +96,31 @@ def fourth_task(con):
 
 def fifth_task(con):
     WITH_WINDOW_FUNCTION_SQL = """
-        WITH a AS(
-            SELECT DISTINCT 
-                sb.service_id,
-                STRFTIME ('%Y-%m', sb.service_start_date) as year_month,
-                COUNT(sb.service_id)
-                OVER (
-                    PARTITION BY 
-                        STRFTIME ('%Y-%m', sb.service_start_date),
-                        sb.service_id 
-                    ORDER BY sb.service_id 
-                ) AS count_month,
-                AVG(sb.price)
-                OVER (
-                    PARTITION BY 
-                        STRFTIME ('%Y-%m', sb.service_start_date),
-                        sb.service_id 
-                ) AS avg_month
-            FROM service_booking sb 
-            ORDER BY year_month, count_month DESC, avg_month DESC
-        )
-        SELECT
-            SUBSTRING(a.year_month,1,4)  AS Год,
-            SUBSTRING(a.year_month, 6,2)  AS Месяц,
-            s.service_name AS Услуга
-        FROM a
-        JOIN service s ON a.service_id = s.service_id 
-        WHERE a.service_id = (
-            SELECT
-                sb1.service_id
-            FROM service_booking sb1
-            WHERE STRFTIME('%Y-%m', sb1.service_start_date) = a.year_month
-            GROUP BY sb1.service_id 
-            ORDER BY COUNT(sb1.service_id) DESC, AVG(sb1.price) DESC 
-            LIMIT 1
-        )"""
-    WITHOUT_WINDOW_FUNCTION_SQL = """
-        WITH unique_year_month(year_month)
+        WITH temp_rows
         AS (
-            SELECT DISTINCT 
-                STRFTIME('%Y-%m', sb.service_start_date) 
-            FROM service_booking sb 
-            WHERE STRFTIME('%Y', sb.service_start_date) IN ('2020', '2021')  
+            SELECT 
+                STRFTIME ('%Y-%m', sb.service_start_date) AS year_month,
+                sb.service_id,
+                ROW_NUMBER() OVER(
+                    PARTITION BY STRFTIME ('%Y-%m', sb.service_start_date) 
+                    ORDER BY COUNT(sb.service_id) DESC, AVG(sb.price) DESC
+                ) AS row_num
+            FROM service_booking sb
+            GROUP BY year_month, sb.service_id
         )
         SELECT 
-            SUBSTR(uym.year_month, 1, 4) AS Год,
-            SUBSTR(uym.year_month, 6, 7) AS Месяц,
+            SUBSTR(tr.year_month, 1, 4) AS Год,
+            SUBSTR(tr.year_month, 6, 7) AS Месяц,
             s.service_name AS Услуга
-        FROM unique_year_month uym
-        LEFT JOIN service_booking sb ON STRFTIME('%Y-%m', sb.service_start_date) = uym.year_month
-        LEFT JOIN service s ON sb.service_id = s.service_id 
-        WHERE sb.service_id = (
-            SELECT 
-                sb.service_id 
-            FROM service_booking sb 
-            WHERE STRFTIME('%Y-%m', sb.service_start_date) = uym.year_month
-            GROUP BY STRFTIME('%Y-%m', sb.service_start_date), sb.service_id 
-            ORDER BY COUNT(sb.service_id) DESC, AVG(sb.price) DESC
-            LIMIT 1  
-        )
-        GROUP BY sb.service_id 
-        ORDER BY Год, Месяц"""
+        FROM temp_rows tr
+        LEFT JOIN service s ON s.service_id = tr.service_id
+        WHERE row_num = 1"""
     df1 = pd.read_sql(WITH_WINDOW_FUNCTION_SQL, con)
-    df2 = pd.read_sql(WITHOUT_WINDOW_FUNCTION_SQL, con)
     print(df1)
-    print(df2)
     
 if __name__ == '__main__':
     with sq.connect('./booking.db') as con:
         try:
-            fourth_task(con)
+            fifth_task(con)
         except e:
             con.rollback()
