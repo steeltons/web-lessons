@@ -1,0 +1,25 @@
+spring:
+    mail:
+        host: smtp.gmail.com
+        protocol: smtp
+        port: 587
+        username: tsvetstas30@gmail.com
+        password: skuq elvc bfbs pmoj
+        properties:
+            mail:
+                smtp:
+                    auth: true
+                    starttls:
+                        enable: true
+    kafka:
+        bootstrap-servers: localhost:29092 
+        producer:
+            value-serializer: org.springframework.kafka.support.serializer.JsonSerializer        
+        consumer:  
+            group-id: mail-consumer
+            value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+    thymeleaf:
+        prefix: classpath:/template/
+
+topic:
+  mail-topic: test-topic 

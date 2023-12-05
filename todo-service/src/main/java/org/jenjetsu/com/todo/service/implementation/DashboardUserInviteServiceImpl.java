@@ -1,11 +1,15 @@
 package org.jenjetsu.com.todo.service.implementation;
 
 import static java.lang.String.format;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.jenjetsu.com.todo.broker.sender.MailMessageSender;
+import org.jenjetsu.com.todo.dto.MailDTO;
 import org.jenjetsu.com.todo.exception.EntityValidateException;
+import org.jenjetsu.com.todo.mailgenerator.MailDtoGenerator;
 import org.jenjetsu.com.todo.model.Dashboard;
 import org.jenjetsu.com.todo.model.DashboardUserInvite;
 import org.jenjetsu.com.todo.model.User;
@@ -23,17 +27,25 @@ import jakarta.persistence.EntityNotFoundException;
 public class DashboardUserInviteServiceImpl extends SimpleJpaService<DashboardUserInvite, UUID> 
                                             implements DashboardUserInviteService{
     
+    private final Duration INVITE_EXPIRATION_TIME = Duration.ofHours(48l);
+
     private final DashboardUserInviteRepository inviteRep;
     private final UserRepository userRep;
     private final DashboardRepository dashboardRep;
+    private final MailMessageSender messageSender;
+    private final MailDtoGenerator<DashboardUserInvite> mailGenerator;
 
     public DashboardUserInviteServiceImpl(DashboardUserInviteRepository inviteRep,
                                           UserRepository userRep,
-                                          DashboardRepository dashboardRep) {
+                                          DashboardRepository dashboardRep,
+                                          MailMessageSender messageSender,
+                                          MailDtoGenerator<DashboardUserInvite> mailGenerator) {
         super(DashboardUserInvite.class, inviteRep);
         this.inviteRep = inviteRep;
         this.userRep = userRep;
         this.dashboardRep = dashboardRep;
+        this.messageSender = messageSender;
+        this.mailGenerator = mailGenerator;
     }
 
     @Override
@@ -64,7 +76,10 @@ public class DashboardUserInviteServiceImpl extends SimpleJpaService<DashboardUs
                                                     )); 
         }
         raw.setReceiver(receiver);
-        return super.createEntity(raw);
+        raw = super.createEntity(raw);
+        MailDTO message = this.mailGenerator.generateMail(raw);
+        this.messageSender.sendMailMessage(message);
+        return raw;
     }
 
     @Override

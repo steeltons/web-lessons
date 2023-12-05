@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface TaskStatusRepository extends JpaRepository<TaskStatus, Long> {
+public interface TaskStatusRepository extends JpaRepository<TaskStatus, Integer> {
 
     public static final String STANDART_TASK_NAME = "CREATED";
 

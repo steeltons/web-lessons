@@ -31,7 +31,7 @@ public class DashboardUserInvite {
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "dashboard_id")
     private Dashboard dashboard;
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "inviter_id")
     private User inviter;
     @ManyToOne(optional = false, fetch = FetchType.EAGER)

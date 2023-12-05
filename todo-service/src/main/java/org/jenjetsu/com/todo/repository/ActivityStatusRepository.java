@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.jenjetsu.com.todo.model.ActivityStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ActivityStatusRepository extends JpaRepository<ActivityStatus, Long> {
+public interface ActivityStatusRepository extends JpaRepository<ActivityStatus, Integer> {
 
     public static final String STANDARD_STATUS = "CREATED";
 
