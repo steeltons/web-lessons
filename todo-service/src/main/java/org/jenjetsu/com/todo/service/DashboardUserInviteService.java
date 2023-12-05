@@ -6,5 +6,6 @@ import org.jenjetsu.com.todo.model.DashboardUserInvite;
 
 public interface DashboardUserInviteService extends CRUDService<DashboardUserInvite, UUID> {
     
-    public void completeInvite(UUID inviteId);
+    public void acceptInvite(UUID inviteId);
+    public void declineInvite(UUID inviteId);
 }

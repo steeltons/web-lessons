@@ -1,6 +1,7 @@
 package org.jenjetsu.com.todo.service.implementation;
 
 import static java.lang.String.format;
+import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
@@ -17,6 +18,7 @@ import org.jenjetsu.com.todo.repository.DashboardRepository;
 import org.jenjetsu.com.todo.repository.DashboardUserInviteRepository;
 import org.jenjetsu.com.todo.repository.UserRepository;
 import org.jenjetsu.com.todo.service.DashboardUserInviteService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +29,7 @@ import jakarta.persistence.EntityNotFoundException;
 public class DashboardUserInviteServiceImpl extends SimpleJpaService<DashboardUserInvite, UUID> 
                                             implements DashboardUserInviteService{
     
-    private final Duration INVITE_EXPIRATION_TIME = Duration.ofHours(48l);
+    private final Duration INVITE_EXPIRATION_TIME;
 
     private final DashboardUserInviteRepository inviteRep;
     private final UserRepository userRep;
@@ -39,13 +41,15 @@ public class DashboardUserInviteServiceImpl extends SimpleJpaService<DashboardUs
                                           UserRepository userRep,
                                           DashboardRepository dashboardRep,
                                           MailMessageSender messageSender,
-                                          MailDtoGenerator<DashboardUserInvite> mailGenerator) {
+                                          MailDtoGenerator<DashboardUserInvite> mailGenerator,
+                                          @Value("${spring.application.dashboard.invite-expiration-time-hours}") String time) {
         super(DashboardUserInvite.class, inviteRep);
         this.inviteRep = inviteRep;
         this.userRep = userRep;
         this.dashboardRep = dashboardRep;
         this.messageSender = messageSender;
         this.mailGenerator = mailGenerator;
+        INVITE_EXPIRATION_TIME = Duration.ofHours(Long.parseLong(time));
     }
 
     @Override
@@ -76,7 +80,11 @@ public class DashboardUserInviteServiceImpl extends SimpleJpaService<DashboardUs
                                                     )); 
         }
         raw.setReceiver(receiver);
+        Instant expirationTime = Instant.now().plus(INVITE_EXPIRATION_TIME);
+        raw.setExpirationDate(Timestamp.from(expirationTime));
         raw = super.createEntity(raw);
+        raw.setInviter(this.userRep.findById(raw.getInviter().getUserId()).get());
+        raw.setDashboard(this.dashboardRep.findById(raw.getDashboard().getDashboardId()).get());
         MailDTO message = this.mailGenerator.generateMail(raw);
         this.messageSender.sendMailMessage(message);
         return raw;
@@ -84,7 +92,7 @@ public class DashboardUserInviteServiceImpl extends SimpleJpaService<DashboardUs
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public void completeInvite(UUID inviteId) {
+    public void acceptInvite(UUID inviteId) {
         DashboardUserInvite invite = this.readById(inviteId);
         if(Instant.now().isBefore(invite.getExpirationDate().toInstant())) {
             Dashboard dashboard = invite.getDashboard();
@@ -95,6 +103,15 @@ public class DashboardUserInviteServiceImpl extends SimpleJpaService<DashboardUs
             this.inviteRep.deleteById(inviteId);
         } else {
             throw new EntityValidateException(format("Invite %s is expired", inviteId));
+        }
+    }
+
+    @Override
+    public void declineInvite(UUID inviteId) {
+        if(this.existsById(inviteId)) {
+            this.inviteRep.deleteById(inviteId);
+        } else {
+            throw new EntityNotFoundException(format("DashboardUserInvite with id %s not exists", inviteId));
         }
     }
 }

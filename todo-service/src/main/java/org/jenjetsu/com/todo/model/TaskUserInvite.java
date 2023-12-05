@@ -1,6 +1,5 @@
 package org.jenjetsu.com.todo.model;
 
-import java.sql.Timestamp;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
@@ -21,23 +20,20 @@ import lombok.ToString;
 @Getter @Setter @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "t_dashboard_user_invite")
+@Entity(name = "t_task_user_invite")
 @Builder
-public class DashboardUserInvite {
- 
+public class TaskUserInvite {
+    
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     @Column(columnDefinition = "UUID DEFAULT gen_random_uuid()")
-    private UUID dashboardUserInviteId;
+    private UUID taskUserInviteId;
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "dashboard_id")
-    private Dashboard dashboard;
+    @JoinColumn(name = "receiver_id")
+    private User receiver;
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "inviter_id")
     private User inviter;
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "receiver_id")
-    private User receiver;
-    @Column(name = "expiration_date", nullable = false)
-    private Timestamp expirationDate;
-
+    @JoinColumn(name = "task_id")
+    private Task task;
 }

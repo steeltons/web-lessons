@@ -18,12 +18,12 @@ public class SimpleJpaServiceBeanConfiguration {
     }
 
     @Bean
-    public CRUDService<TaskStatus, Long> taskStatusServiceImpl(JpaRepository<TaskStatus, Long> rep) {
+    public CRUDService<TaskStatus, Integer> taskStatusServiceImpl(JpaRepository<TaskStatus, Integer> rep) {
         return new SimpleJpaService<>(TaskStatus.class, rep);
     }
 
     @Bean
-    public CRUDService<ActivityStatus, Long> activityStatusServiceImpl(JpaRepository<ActivityStatus, Long> rep) {
+    public CRUDService<ActivityStatus, Integer> activityStatusServiceImpl(JpaRepository<ActivityStatus, Integer> rep) {
         return new SimpleJpaService<>(ActivityStatus.class, rep);
     }
 }

@@ -13,15 +13,18 @@ import org.jenjetsu.com.todo.dto.TaskReturnDTO;
 import org.jenjetsu.com.todo.dto.TaskUserLinkDTO;
 import org.jenjetsu.com.todo.model.Dashboard;
 import org.jenjetsu.com.todo.model.Task;
+import org.jenjetsu.com.todo.model.TaskUserInvite;
 import org.jenjetsu.com.todo.model.User;
 import org.jenjetsu.com.todo.security.JwtUserIdAuthenticationToken;
 import org.jenjetsu.com.todo.service.TaskService;
+import org.jenjetsu.com.todo.service.TaskUserInviteService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -35,6 +38,7 @@ import lombok.RequiredArgsConstructor;
 public class TaskController {
 
     private final TaskService taskService;
+    private final TaskUserInviteService taskInviteService;
 
     @GetMapping("/{taskId}")
     @ResponseStatus(HttpStatus.OK)
@@ -77,6 +81,7 @@ public class TaskController {
     }
 
     @PostMapping("/add-user")
+    @Deprecated(forRemoval = true)
     @ResponseStatus(HttpStatus.CREATED)
     public void linkUserWithTask(@RequestBody TaskUserLinkDTO userLinkDTO, 
                                  JwtUserIdAuthenticationToken token) {
@@ -108,4 +113,39 @@ public class TaskController {
         this.taskService.changeTaskDeleteStatus(taskId, true);
     }
 
+    /*
+     * All about task invite
+     */
+
+    @PostMapping("/invite")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Map<String, ?> inviteUserToTask(@RequestBody TaskUserLinkDTO inviteDto,
+                                 JwtUserIdAuthenticationToken token) {
+        TaskUserInvite raw = TaskUserInvite.builder()
+            .receiver(User.builder()
+                          .userId(inviteDto.userId())
+                          .username(inviteDto.username())
+                          .email(inviteDto.email())
+                          .build())
+            .inviter(User.builder().userId(token.getUserId()).build())
+            .task(Task.builder()
+                      .taskId(inviteDto.taskId())
+                      .dashboard(Dashboard.builder().dashboardId(inviteDto.dashboardId()).build())
+                      .build())
+            .build();
+        raw = this.taskInviteService.create(raw);
+        return Map.of("task_invite_id", raw.getTaskUserInviteId());
+    }
+    
+    @PutMapping("/invite/{inviteId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void acceptTaskInvite(@PathVariable("inviteId") UUID inviteId) {
+        this.taskInviteService.accpetInvite(inviteId);
+    }
+
+    @DeleteMapping("/invite/{inviteId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void declineTaskInvite(@PathVariable("inviteId") UUID inviteId) {
+        this.taskInviteService.declineInvite(inviteId);
+    }
 }

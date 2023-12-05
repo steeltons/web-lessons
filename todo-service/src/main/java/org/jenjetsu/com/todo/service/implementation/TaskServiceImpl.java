@@ -138,4 +138,5 @@ public class TaskServiceImpl extends SimpleJpaService<Task, UUID> implements Tas
             throw new EntityValidateException(format("Task %s delete status is already %s", taskId, deleteStatus));
         }
     }
+
 }

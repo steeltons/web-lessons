@@ -96,7 +96,7 @@ public class SimpleJpaService<E, ID extends Serializable> implements CRUDService
     }
 
     /**
-     * <h2updateEntity</h2>
+     * <h2>updateEntity</h2>
      * <p>Overridable method for updating entities. Used by update method that wrapped by @Transactional</p>
      * @param newEntity
      * @return

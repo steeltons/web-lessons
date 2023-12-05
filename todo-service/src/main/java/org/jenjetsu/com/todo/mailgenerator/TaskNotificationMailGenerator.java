@@ -13,6 +13,7 @@ public class TaskNotificationMailGenerator implements MailDtoGenerator<Task> {
     public MailDTO generateMail(Task t) {
         Map<String, Object> params = new HashMap<>();
         params.put("notificationTitle", t.getTitle());
+
         return null;
     }
 }
