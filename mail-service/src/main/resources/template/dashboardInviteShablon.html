@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 <head>
     <meta charset="utf-8">
@@ -12,7 +13,6 @@
         body {
             font-family: 'Roboto Mono', monospace;
         }
-        h1,h2,h3,h4,h5,h6 {text-align: center;}
         p {
             font-size: 18px;
             word-wrap: break-word;
@@ -39,18 +39,15 @@
 </head>
 <body>
     <div style="width: 70%; margin: 0 auto;">
-        <h1 style="font-size: 44px;">Look at me</h1>
-        <h2 style="font-size: 28px;">You have got new task!</h2>
-        <p>Good day <b th:text="${receiverUsername}"></b>!</p>
-        <p>
-           User <b th:text="${username}"></b> has added you to the new task <b th:text="${taskTitle}"></b>. 
-           Current task status <b th:text="${taskStatus}"></b>
-        </p>
-        <p>Get more information about task: <b text="${taskInformationLink}"></b></p>
+        <h1 style="text-align: center; font-size: 44px;">Welcome</h1>
+        <h3 style="text-align: center; font-size: 28px;">You have been invited to new dashboard!</h3>
+        <p>Hello, <b th:text="${receiverUsername}"></b> !</p>
+        <p><b th:text="${creatorUsername}"></b> has been invite you to dashboard <b th:text="${dashboardName}"></b>.</p>
+        <p>Invite will be active for next <span th:text="${expirationTime}"></span>.</p>
         <p>Thanks for using our project! Together we will make our lives better!</p> 
         <div class="button-container">
-            <form th:action="${acceptLink}" th:method="PUT"><button type="submit" class="button accept">accept</button></form>
-            <form th:action="${declineLink}" th:method="DELETE"><button type="submit" class="button decline">decline</button></form>
+            <form th:action="${inviteLink}" th:method="PUT"><button type="submit" class="button accept">accept</button></form>
+            <form th:action="${inviteLink}" th:method="DELETE"><button type="submit" class="button decline">decline</button></form>
         </div>
     </div>
 </body>
