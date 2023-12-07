@@ -7,13 +7,13 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.jenjetsu.com.todo.dto.ChangeStatusDTO;
+import org.jenjetsu.com.todo.dto.TakeTaskDTO;
 import org.jenjetsu.com.todo.dto.TaskCreateDTO;
 import org.jenjetsu.com.todo.dto.TaskUserLinkDTO;
 import org.jenjetsu.com.todo.exception.EntityAccessDeniedException;
 import org.jenjetsu.com.todo.exception.EntityNotFoundException;
 import org.jenjetsu.com.todo.repository.DashboardRepository;
 import org.jenjetsu.com.todo.repository.TaskRepository;
-import org.jenjetsu.com.todo.repository.TaskUserInviteRepository;
 import org.jenjetsu.com.todo.security.JwtUserIdAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,7 +28,6 @@ public class TaskPreEndpointProtectAsect {
     
     private final TaskRepository taskRep;
     private final DashboardRepository dashboardRep;
-    private final TaskUserInviteRepository taskInviteRep;
     
     @Before("execution(public * org.jenjetsu.com.todo.controller.TaskController.saveNewTask(..))")
     public void protectSaveNewTaskEndpoint(JoinPoint jp) {
@@ -56,25 +55,13 @@ public class TaskPreEndpointProtectAsect {
         }
     }
 
-    @Before("execution(public * org.jenjetsu.com.todo.controller.TaskController.linkUserWithTask(..))")
-    public void protectInviteUserToTaskEndpoint(JoinPoint jp) {
-        TaskUserLinkDTO linkDto = (TaskUserLinkDTO) jp.getArgs()[0];
+    @Before("execution(public * org.jenjetsu.com.todo.controller.TaskController.takeTask(..))")
+    public void protectTakeTaskEndpoint(JoinPoint jp) {
+        TakeTaskDTO takeDto = (TakeTaskDTO) jp.getArgs()[0];
         JwtUserIdAuthenticationToken token = (JwtUserIdAuthenticationToken) jp.getArgs()[1];
-        if(!this.taskRep.isUserTaskCreator(token.getUserId(), linkDto.taskId())) {
-            throw new EntityAccessDeniedException(format("Only creator can add user to task %s",
-                                                         linkDto.taskId()
-                                                        ));
-        } 
-    }
-
-    @Before("execution(public * org.jenjetsu.com.todo.controller.TaskController.*TaskInvite(..)) || " +
-            "execution(public * org.jenjetsu.com.todo.controller.TaskController.*TaskInvite(..))")
-    public void protectTaskInviteEndpoint(JoinPoint jp) {
-        UUID inviteId = (UUID) jp.getArgs()[0];
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        JwtUserIdAuthenticationToken token = (JwtUserIdAuthenticationToken) auth;
-        if(!this.taskInviteRep.isUserInviteReceiver(token.getUserId(), inviteId)) {
-            throw new EntityAccessDeniedException(format("User %s is not receiver", token.getUserId()));
+        if(!this.dashboardRep.isUserInDashboard(takeDto.dashboardId(), token.getUserId())) {
+            throw new EntityAccessDeniedException(format("User with id %s is not memeber of task dashboard %s",
+                                                      token.getUserId(), takeDto.dashboardId()));
         }
     }
 

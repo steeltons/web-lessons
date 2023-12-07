@@ -11,7 +11,6 @@ import org.jenjetsu.com.todo.exception.EntityNotFoundException;
 import org.jenjetsu.com.todo.exception.EntityValidateException;
 import org.jenjetsu.com.todo.model.Task;
 import org.jenjetsu.com.todo.model.TaskStatus;
-import org.jenjetsu.com.todo.repository.DashboardRepository;
 import org.jenjetsu.com.todo.repository.TaskRepository;
 import org.jenjetsu.com.todo.repository.TaskStatusRepository;
 import org.jenjetsu.com.todo.repository.UserRepository;
@@ -25,17 +24,14 @@ public class TaskServiceImpl extends SimpleJpaService<Task, UUID> implements Tas
     private final TaskRepository taskRep;
     private final TaskStatusRepository taskStatusRep;
     private final UserRepository userRep;
-    private final DashboardRepository dashboardRep;
 
     public TaskServiceImpl(TaskRepository taskRep,
                            TaskStatusRepository taskStatusRep,
-                           UserRepository userRep,
-                           DashboardRepository dashboardRep) {
+                           UserRepository userRep) {
         super(Task.class, taskRep);
         this.taskRep = taskRep;
         this.taskStatusRep = taskStatusRep;
         this.userRep = userRep;
-        this.dashboardRep = dashboardRep;
     }
 
     @Override
@@ -77,7 +73,9 @@ public class TaskServiceImpl extends SimpleJpaService<Task, UUID> implements Tas
             } 
             if(optionalUserId.isEmpty()) {
                 throw new EntityNotFoundException(format("User with id %s username %s and email %s not found",
-                dto.userId(), dto.username(), dto.email()));
+                                                          dto.userId(), 
+                                                          dto.username(), 
+                                                          dto.email()));
             } 
             userId = optionalUserId.get();
         }
@@ -89,13 +87,9 @@ public class TaskServiceImpl extends SimpleJpaService<Task, UUID> implements Tas
         if(!this.taskRep.existsById(taskId)) {
             throw new EntityNotFoundException(format("Task with id %s not exists", taskId));
         }
-        if(!this.dashboardRep.isUserInDashboard(dashboardId, userId)) {
-            throw new EntityValidateException(format("User with id %s is not memeber of task dashboard %s",
-                                                     userId, dashboardId));
-        }
         if(this.taskRep.isUserInTask(userId, taskId)) {
             throw new EntityValidateException(format("User with id %s is already member of task %s", 
-                                                     userId, taskId));
+                                                      userId, taskId));
         }
         this.taskRep.addUserToTask(userId, taskId, dashboardId);
     } 

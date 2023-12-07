@@ -4,7 +4,6 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.hibernate.Hibernate;
 import org.jenjetsu.com.todo.dto.MailDTO;
 import org.jenjetsu.com.todo.model.DashboardUserInvite;
 import org.jenjetsu.com.todo.model.MailMessageType;
@@ -31,7 +30,7 @@ public class DashboardInviteMailGenerator implements MailDtoGenerator<DashboardU
         params.put("creatorUsername", from.getInviter().getUsername());
         params.put("dashboardName", from.getDashboard().getName());
         String inviteLink = ServletUriComponentsBuilder.fromCurrentRequest()
-            .path("/api/v1/dashboards/invite/" + from.getDashboardUserInviteId().toString())
+            .path("/accept/" + from.getDashboardUserInviteId().toString())
             .toUriString();
         params.put("inviteLink", inviteLink);
         params.put("dashboardName", from.getDashboard().getName());
