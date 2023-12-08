@@ -37,5 +37,3 @@ Authorization: Bearer {{accessToken}}
 ### Get activity information
 GET {{rootUrl}}/api/v1/activities/5f89503d-45b2-4903-92b2-ac2d5c1e6fb4
 Authorization: Bearer {{accessToken}}
-
-
