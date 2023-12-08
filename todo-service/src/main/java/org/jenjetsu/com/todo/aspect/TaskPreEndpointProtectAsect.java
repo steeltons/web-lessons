@@ -7,7 +7,6 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.jenjetsu.com.todo.dto.ChangeStatusDTO;
-import org.jenjetsu.com.todo.dto.TakeTaskDTO;
 import org.jenjetsu.com.todo.dto.TaskCreateDTO;
 import org.jenjetsu.com.todo.dto.TaskUserLinkDTO;
 import org.jenjetsu.com.todo.exception.EntityAccessDeniedException;
@@ -57,11 +56,22 @@ public class TaskPreEndpointProtectAsect {
 
     @Before("execution(public * org.jenjetsu.com.todo.controller.TaskController.takeTask(..))")
     public void protectTakeTaskEndpoint(JoinPoint jp) {
-        TakeTaskDTO takeDto = (TakeTaskDTO) jp.getArgs()[0];
+        UUID taskId = (UUID) jp.getArgs()[0];
         JwtUserIdAuthenticationToken token = (JwtUserIdAuthenticationToken) jp.getArgs()[1];
-        if(!this.dashboardRep.isUserInDashboard(takeDto.dashboardId(), token.getUserId())) {
+        UUID dashboardId = this.taskRep.getDashboardIdByTaskId(taskId);
+        if(!this.dashboardRep.isUserInDashboard(dashboardId, token.getUserId())) {
             throw new EntityAccessDeniedException(format("User with id %s is not memeber of task dashboard %s",
-                                                      token.getUserId(), takeDto.dashboardId()));
+                                                      token.getUserId(), dashboardId));
+        }
+    }
+
+    @Before("execution(public * org.jenjetsu.com.todo.controller.TaskController.unsubscribeFromTask(..))")
+    public void protectUnsubscribeFromTaskEndpoint(JoinPoint jp) {
+        UUID taskId = (UUID) jp.getArgs()[0];
+        JwtUserIdAuthenticationToken token = (JwtUserIdAuthenticationToken) jp.getArgs()[1];
+        if(!this.taskRep.isUserInTask(token.getUserId(), taskId)) {
+            throw new EntityAccessDeniedException(format("User with id %s is not member of task %s", 
+                                                      token.getUserId(), taskId));
         }
     }
 

@@ -10,6 +10,7 @@ public interface TaskActivityService extends CRUDService<TaskActivity, UUID> {
 
     public List<TaskActivity> readAllByUserId(UUID userId);
     public List<TaskActivity> readAllByCreatorId(UUID creatorId);
+    public void changeActivityUser(UUID activityID, UUID userId);
     public void changeActivityStatus(ChangeStatusDTO statusDTO);
     public void changeActivityDeleteStatus(UUID activityId, boolean deleteStatus);
 }

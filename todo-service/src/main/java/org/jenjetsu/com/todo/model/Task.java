@@ -1,6 +1,7 @@
 package org.jenjetsu.com.todo.model;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,11 +45,12 @@ public class Task {
     private TaskStatus status;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "t_user_dashboard_task",
+            name = "t_user_task",
             joinColumns = @JoinColumn(name = "task_id", nullable = false),
             inverseJoinColumns = @JoinColumn(name = "user_id", nullable = false)
     )
-    private List<User> userList;
+    @Builder.Default
+    private List<User> userList = new ArrayList<>();
     @Column(name = "deleted", columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean deleted;
 
@@ -58,13 +60,15 @@ public class Task {
     @Column(name = "created_at", nullable = false)
     private Timestamp createdAt;
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {MERGE, DETACH})
-    @JoinColumn(name = "dashboard_id", columnDefinition = "UUID REFERENCES t_user_dashboard_task(dashboard_id)")
+    @JoinColumn(name = "dashboard_id")
     private Dashboard dashboard;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = ALL)
     @JoinColumn(name = "task_id")
-    private List<TaskActivity> activityList;
+    @Builder.Default
+    private List<TaskActivity> activityList = new ArrayList<>();
     @OneToMany(fetch = FetchType.LAZY, cascade = ALL)
     @JoinColumn(name = "task_id")
-    private List<TaskComment> commentList;
+    @Builder.Default
+    private List<TaskComment> commentList = new ArrayList<>();
 }

@@ -69,7 +69,7 @@ public class TaskActivityController {
         TaskActivity activity = TaskActivity.builder()
                 .title(dto.title())
                 .description(dto.description())
-                .user(User.builder().userId(dto.userId()).username(dto.username()).email(dto.email()).build())
+                .user(dto.userId() != null ? User.builder().userId(dto.userId()).build() : null)
                 .task(Task.builder().taskId(dto.taskId()).build())
                 .createdBy(User.builder().userId(token.getUserId()).build())
                 .createdAt(Timestamp.from(Instant.now()))
@@ -101,4 +101,17 @@ public class TaskActivityController {
         return Map.of("message", String.format("Activity %s was restored", activityId));
     }
 
+    @PatchMapping("/subscribe/{activityId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void subscribeToActivity(@PathVariable("activityId") UUID activityId, 
+                             JwtUserIdAuthenticationToken token) {
+        this.activityService.changeActivityUser(activityId, token.getUserId());
+    }
+
+    @PatchMapping("/usubscribe/{activityId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void unsubscribeFromActivity(@PathVariable("activityId") UUID activityId, 
+                                        JwtUserIdAuthenticationToken token) {
+        this.activityService.changeActivityUser(activityId, null);
+    }
 }

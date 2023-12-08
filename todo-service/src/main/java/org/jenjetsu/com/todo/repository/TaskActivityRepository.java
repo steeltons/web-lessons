@@ -1,6 +1,7 @@
 package org.jenjetsu.com.todo.repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.jenjetsu.com.todo.model.TaskActivity;
@@ -36,4 +37,11 @@ public interface TaskActivityRepository extends JpaRepository<TaskActivity, UUID
     )
     public boolean isUserActivityCreatorOrMember(@Param("userId") UUID userId, 
                                                  @Param("activityId") UUID activityId);
+
+    @Query(
+        value = "SELECT a.task.taskId " + 
+                "FROM t_task_activity a " + 
+                "WHERE a.taskActivityId = :activityId"
+    )
+    public Optional<UUID> getTaskIdByActivityId(@Param("activityId") UUID activityId);
 }

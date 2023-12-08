@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.jenjetsu.com.todo.model.User;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,6 +18,10 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     @Query("SELECT u FROM t_user u WHERE u.email=:email")
     public Optional<User> findByEmail(@Param("email") String email);
+
+    @EntityGraph(attributePaths= {"taskList", "dashboardList", "activityList"})
+    @Query("SELECT u FROM t_user u WHERE u.userId = :userId")
+    public Optional<User> findByIdFetchAll(@Param("userId") UUID userId);
 
     public boolean existsByUsername(String username);
     public boolean existsByEmail(String email);

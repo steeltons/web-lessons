@@ -34,8 +34,8 @@ public class TaskActivity {
     private String title;
     @Column(name = "description", length = 2048)
     private String description;
-    @ManyToOne(optional = false, fetch = FetchType.EAGER, cascade = {MERGE, DETACH})
-    @JoinColumn(name = "user_id", columnDefinition = "UUID REFERENCES t_user_dashboard_task(user_id)")
+    @ManyToOne(optional = true, fetch = FetchType.EAGER, cascade = {MERGE, DETACH})
+    @JoinColumn(name = "user_id", columnDefinition = "UUID REFERENCES t_user_task(user_id)")
     private User user;
     @ManyToOne(optional = false, fetch = FetchType.EAGER, cascade = {MERGE, DETACH})
     @JoinColumn(name = "task_id", columnDefinition = "UUID REFERENCES t_user_dashboard_task(task_id)")

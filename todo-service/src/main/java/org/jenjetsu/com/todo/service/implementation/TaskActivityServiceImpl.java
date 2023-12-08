@@ -2,7 +2,6 @@ package org.jenjetsu.com.todo.service.implementation;
 
 import static java.lang.String.format;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.jenjetsu.com.todo.dto.ChangeStatusDTO;
@@ -14,11 +13,12 @@ import org.jenjetsu.com.todo.model.TaskActivity;
 import org.jenjetsu.com.todo.model.User;
 import org.jenjetsu.com.todo.repository.ActivityStatusRepository;
 import org.jenjetsu.com.todo.repository.TaskActivityRepository;
-import org.jenjetsu.com.todo.repository.UserRepository;
 import org.jenjetsu.com.todo.security.JwtUserIdAuthenticationToken;
 import org.jenjetsu.com.todo.service.TaskActivityService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TaskActivityServiceImpl extends SimpleJpaService<TaskActivity, UUID>
@@ -26,15 +26,12 @@ public class TaskActivityServiceImpl extends SimpleJpaService<TaskActivity, UUID
 
     private final TaskActivityRepository activityRep;
     private final ActivityStatusRepository statusRep;
-    private final UserRepository userRep;
 
     public TaskActivityServiceImpl(TaskActivityRepository activityRep,
-                                   ActivityStatusRepository statusRep,
-                                   UserRepository userRep) {
+                                   ActivityStatusRepository statusRep) {
         super(TaskActivity.class, activityRep);
         this.activityRep = activityRep;
         this.statusRep = statusRep;
-        this.userRep = userRep;
     }
 
     @Override
@@ -42,21 +39,6 @@ public class TaskActivityServiceImpl extends SimpleJpaService<TaskActivity, UUID
         ActivityStatus activityStatus = this.statusRep.findByStatus(ActivityStatusRepository.STANDARD_STATUS)
                 .orElseThrow(() -> new EntityNotFoundException("Standard status CREATED not exists"));
         raw.setActivityStatus(activityStatus);
-        UUID userId = raw.getUser().getUserId();
-        if(userId == null) {
-            Optional<UUID> optionalUserId = Optional.empty();
-            if (raw.getUser().getUsername() != null) {
-                optionalUserId = this.userRep.getUserIdByUsername(raw.getUser().getUsername());
-            } 
-            if (optionalUserId.isEmpty() && raw.getUser().getEmail() != null) {
-                optionalUserId = this.userRep.getUserIdByEmail(raw.getUser().getEmail());
-            }
-            userId = optionalUserId.orElseThrow(() -> new
-                    EntityNotFoundException(format("User with username %s and email %s not exists", 
-                                                   raw.getUser().getUsername(),
-                                                   raw.getUser().getEmail())));
-         }
-        raw.setUser(User.builder().userId(userId).build());
         return super.createEntity(raw);
     }
 
@@ -101,4 +83,23 @@ public class TaskActivityServiceImpl extends SimpleJpaService<TaskActivity, UUID
                     newEntity.getTaskActivityId().toString()));
         }
      }
+
+     @Override
+     @Transactional(propagation = Propagation.REQUIRED)
+     public void changeActivityUser(UUID activityId, UUID userId) {
+        TaskActivity activity = this.readById(activityId);
+        if(userId != null) {
+            if(activity.getUser() != null) {
+                throw new EntityValidateException(format("Activity %s is already occupied by another user",
+                                                          activityId));
+            }
+            activity.setUser(User.builder().userId(userId).build());
+        } else {
+            if(activity.getUser() == null) {
+                throw new EntityValidateException(format("Activity %s is already free", activityId));
+                
+            }
+           activity.setUser(null);
+        }
+     }  
 }

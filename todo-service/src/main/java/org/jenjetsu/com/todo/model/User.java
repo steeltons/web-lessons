@@ -1,6 +1,7 @@
 package org.jenjetsu.com.todo.model;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -49,19 +50,22 @@ public class User {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "t_user_dashboard_task",
+            name = "t_user_task",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "task_id")
     )
-    private List<Task> taskList;
+    @Builder.Default
+    private List<Task> taskList = new ArrayList<>();
     @ManyToMany
     @JoinTable(
         name = "t_user_dashboard",
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "dashboard_id")
     )
-    private List<Dashboard> dashboardList;
+    @Builder.Default
+    private List<Dashboard> dashboardList = new ArrayList<>();
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private List<TaskActivity> activityList;
+    @Builder.Default
+    private List<TaskActivity> activityList = new ArrayList<>();
 }

@@ -36,14 +36,14 @@ public class UserServiceImpl extends SimpleJpaService<User, UUID> implements Use
         if(!this.existsById(userId)) {
             throw new EntityNotFoundException(format("No such User with id %s", userId.toString()));
         }
+        // return taskRep.findTaskWithActivitiesByUserId(userId);
         return taskRep.findAllByUserIdWithActivities(userId);
     }
 
     @Override
     public User readByIdFetchAll(UUID userId) {
-        // return this.userRep.findByIdFetchAll(userId)
-        //     .orElseThrow(() -> new EntityNotFoundException(format("User with id %s not exists", userId)));
-        return null;
+        return this.userRep.findByIdFetchAll(userId)
+            .orElseThrow(() -> new EntityNotFoundException(format("User with id %s not exists", userId)));
     }
 
     @Override

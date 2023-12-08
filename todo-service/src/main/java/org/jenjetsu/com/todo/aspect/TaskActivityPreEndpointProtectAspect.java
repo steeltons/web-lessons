@@ -7,12 +7,10 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.jenjetsu.com.todo.dto.ChangeStatusDTO;
-import org.jenjetsu.com.todo.dto.UserDashboardInviteDTO;
 import org.jenjetsu.com.todo.exception.EntityAccessDeniedException;
 import org.jenjetsu.com.todo.exception.EntityNotFoundException;
-import org.jenjetsu.com.todo.repository.DashboardRepository;
-import org.jenjetsu.com.todo.repository.DashboardUserInviteRepository;
 import org.jenjetsu.com.todo.repository.TaskActivityRepository;
+import org.jenjetsu.com.todo.repository.TaskRepository;
 import org.jenjetsu.com.todo.security.JwtUserIdAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,38 +21,10 @@ import lombok.RequiredArgsConstructor;
 @Component
 @Aspect
 @RequiredArgsConstructor
-public class UserPreEndpointAuthorizeAspect {
+public class TaskActivityPreEndpointProtectAspect {
     
-    private final DashboardUserInviteRepository inviteRep;
-    private final DashboardRepository dashboardRep;
     private final TaskActivityRepository activityRep;
-
-    @Before("execution(public * org.jenjetsu.com.todo.controller.DashboardController.acceptInvite(..))")
-    public void protectAcceptInviteEndpoint(JoinPoint jp) {
-        UUID inviteId = (UUID) jp.getArgs()[0];
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        JwtUserIdAuthenticationToken token = (JwtUserIdAuthenticationToken) auth;
-        if (!this.inviteRep.compareReceiverIdAndInputId(inviteId, token.getUserId())) {
-            throw new EntityAccessDeniedException(format("User %s is not receiver", token.getUserId()));
-        }
-    }
-
-    @Before("execution(public * org.jenjetsu.com.todo.controller.DashboardController.inviteUser(..))")
-    public void protectInviteUserEndpoint(JoinPoint jp) {
-        UserDashboardInviteDTO inviteDto = (UserDashboardInviteDTO) jp.getArgs()[0];
-        JwtUserIdAuthenticationToken token = (JwtUserIdAuthenticationToken) jp.getArgs()[1];
-        if(!this.dashboardRep.existsById(inviteDto.dashboardId())) {
-            throw new EntityNotFoundException(format("Dashboard with id %s not exists", inviteDto.dashboardId()));
-        }
-        if (!dashboardRep.isUserDashbordCreator(inviteDto.dashboardId(), token.getUserId())) {
-            throw new EntityAccessDeniedException(format("User %s is not dashboard %s owner",
-                                                         token.getUserId(),
-                                                         inviteDto.dashboardId()
-                                                        ));
-        }
-    }
-
-    
+    private final TaskRepository taskRep;
 
     @Before("execution(public * org.jenjetsu.com.todo.controller.TaskActivityController.deleteTaskActivity(..)) || " + 
             "execution(public * org.jenjetsu.com.todo.controller.TaskActivityController.restoreTaskActivity(..))")
@@ -67,6 +37,29 @@ public class UserPreEndpointAuthorizeAspect {
                                                          token.getUserId(), activityId));
         }
     }
+
+    @Before("execution(public * org.jenjetsu.com.todo.controller.TaskActivityController.*subscribe*Activity(..))")
+    public void protectSubscribeToActivityEndpoint(JoinPoint jp) {
+        UUID activityId = (UUID) jp.getArgs()[0];
+        JwtUserIdAuthenticationToken token = (JwtUserIdAuthenticationToken) jp.getArgs()[1];
+        UUID taskId = this.activityRep.getTaskIdByActivityId(activityId)
+            .orElseThrow(() -> new EntityNotFoundException(format("Activity with id %s not found",
+                                                                   activityId)));
+        if(!this.taskRep.isUserInTask(token.getUserId(), taskId)) {
+            throw new EntityAccessDeniedException(format("User with id %s is not member of task %s", 
+                                                      token.getUserId(), taskId));
+        }
+    }
+
+    // @Before("execution(public * org.jenjetsu.com.todo.controller.TaskActivityController.unsubscribeFromActivity(..))")
+    // public void protectUnsubscribeFromActivityEndpoint(JoinPoint jp) {
+    //     UUID activityId = (UUID) jp.getArgs()[0];
+    //     JwtUserIdAuthenticationToken token = (JwtUserIdAuthenticationToken) jp.getArgs()[1];
+    //     if(!this.activityRep.isUserActivityCreatorOrMember(token.getUserId(), activityId)) {
+    //         throw new EntityAccessDeniedException(format("User %s is not activity %s creator or member",
+    //                                                      token.getUserId(), activityId));
+    //     }
+    // }
 
     @Before("execution(public * org.jenjetsu.com.todo.controller.TaskActivityController.changeActivityStatus(..))")
     public void protectActivityChangeStatusEndpoint(JoinPoint jp) {

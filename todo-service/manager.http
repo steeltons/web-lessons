@@ -1,0 +1,41 @@
+@rootUrl=http://localhost:7777
+@realmUrl=http://localhost:8080/realms/jenjetsu-realm
+@accessToken=eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI3QWE5dks0aUpqcG9FRzZ1dDBtblRsN1J4QnNzMGV4OVNFTjR0LXU3TTZVIn0.eyJleHAiOjE3MDIwMzY2MTYsImlhdCI6MTcwMjAyNzYxNiwianRpIjoiN2UzYjMyM2EtYjgyZi00MDI5LTg5ODUtOGRmZjEwMWRjMzgyIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9qZW5qZXRzdS1yZWFsbSIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiI3MTMzNDEzMy1lY2Q4LTQxZDYtYTExZS00ZjI0MDNiMzRiY2IiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJqZW5qZXRzdS1zc28iLCJzZXNzaW9uX3N0YXRlIjoiNTM1NDJjYWQtODkwMi00MzVhLWJmNGItN2Y1NTcyOWU2ZTEwIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIqIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsIlJPTEVfTU9ERVJBVE9SIiwidW1hX2F1dGhvcml6YXRpb24iLCJkZWZhdWx0LXJvbGVzLWplbmpldHN1LXJlYWxtIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCIsInNpZCI6IjUzNTQyY2FkLTg5MDItNDM1YS1iZjRiLTdmNTU3MjllNmUxMCIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJzcHJpbmdfc2VjX3JvbGVzIjpbIm9mZmxpbmVfYWNjZXNzIiwiUk9MRV9NT0RFUkFUT1IiLCJ1bWFfYXV0aG9yaXphdGlvbiIsImRlZmF1bHQtcm9sZXMtamVuamV0c3UtcmVhbG0iXSwicHJlZmVycmVkX3VzZXJuYW1lIjoibWFuYWdlciIsImVtYWlsIjoibWFuYWdlckBtYWlsLmNvbSJ9.FX-gHCFoUrFmi8lzw2YFGnITw4K9gOrQJKuT59tx_uTlhfRxpRw2avRww_TJTiXGZkTOU1af3QG479anhP25hbDKUHVWXANZTW4XJhWDVFx5xpFanzIMwlZvi-TiKNvfA2QmKJSUcq0e06XvtxYZkYd4rOHQh7r9vBLucHId-Iu6eEr4E5oCl7-h0lUR8gG4ZWH6jSpTf1iAvbheOO_kSJgiLq7lPC6O_0GlH5PmaJgIyAZpekh8W-QLXkpSAcfScFq9z8XT3gCj3YYhKH8jYOd_l15fQNaOCcTdZh8fRtq_7RoixsYgKmdfWT0BnoLknE7eymDrkXZUGr0Uf3ZTWg
+@taskId=21d700f9-6400-4389-bfe3-18b8e29f85d3
+@activityId=3ad4f691-8c5f-4223-bd91-424befbc366d
+
+### Obtain access token
+POST {{realmUrl}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id=jenjetsu-sso&client_secret=tb9YimCmd5R1JBVyChxjIEyY6Tv0QEso&redirect_uri=http://localhost:7777/login/oauth2/code/jenjetsu-sso&username=manager&password=1228
+
+### Create task
+POST {{rootUrl}}/api/v1/tasks
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+    "dashboard_id" : "9d86655e-dff2-45af-acda-66bea421e72a",
+    "title" : "test-task"
+}
+
+### Create task activity
+POST {{rootUrl}}/api/v1/activities
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+    "task_id" : "{{taskId}}",
+    "title" : "test-activity"
+}
+
+### Get task information
+GET {{rootUrl}}/api/v1/tasks/45ccbc68-4c65-415c-a75a-0bd03f33cbd4
+Authorization: Bearer {{accessToken}}
+
+### Get activity information
+GET {{rootUrl}}/api/v1/activities/5f89503d-45b2-4903-92b2-ac2d5c1e6fb4
+Authorization: Bearer {{accessToken}}
+
+

@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import org.jenjetsu.com.todo.model.Task;
+import org.jenjetsu.com.todo.model.TaskActivity;
 import org.jenjetsu.com.todo.model.TaskComment;
 import org.jenjetsu.com.todo.serializer.DTOInstantSerializer;
 
@@ -27,7 +28,8 @@ public record TaskReturnDTO(
         @JsonSerialize(using = DTOInstantSerializer.class)
         @JsonProperty("created_at") Instant createdAt,
         @JsonProperty("user_amount") Integer userAmount,
-        @JsonProperty("activity_amount") Integer activityAmount,
+        // @JsonProperty("activity_amount") Integer activityAmount,
+        List<TaskActivityReturnDTO> activities,
         List<TaskCommentaryReturnDTO> commentaries) {
 
     public static TaskReturnDTO from(Task task) {
@@ -40,9 +42,18 @@ public record TaskReturnDTO(
                 .createdBy(task.getCreatedBy() != null ? task.getCreatedBy().getUserId() : null)
                 .createdAt(task.getCreatedAt().toInstant())
                 .userAmount(task.getUserList().size())
-                .activityAmount(task.getActivityList().size())
+                // .activityAmount(task.getActivityList().size())
+                .activities(converTaskActivities(task.getActivityList()))
                 .commentaries(convertTaskCommentaries(task.getCommentList()))
                 .build();
+    }
+
+    private static List<TaskActivityReturnDTO> converTaskActivities(List<TaskActivity> list) {
+        if(list == null) return null;
+        return list.stream()
+                   .filter(Objects::nonNull)
+                   .map(TaskActivityReturnDTO::from)
+                   .toList();
     }
 
     private static List<TaskCommentaryReturnDTO> convertTaskCommentaries(List<TaskComment> list) {

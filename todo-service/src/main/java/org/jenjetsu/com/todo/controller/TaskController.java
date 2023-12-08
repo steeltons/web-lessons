@@ -7,10 +7,8 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.jenjetsu.com.todo.dto.ChangeStatusDTO;
-import org.jenjetsu.com.todo.dto.TakeTaskDTO;
 import org.jenjetsu.com.todo.dto.TaskCreateDTO;
 import org.jenjetsu.com.todo.dto.TaskReturnDTO;
-import org.jenjetsu.com.todo.dto.TaskUserLinkDTO;
 import org.jenjetsu.com.todo.model.Dashboard;
 import org.jenjetsu.com.todo.model.Task;
 import org.jenjetsu.com.todo.model.User;
@@ -76,27 +74,18 @@ public class TaskController {
         return Map.of("task_id", rawTask.getTaskId());
     }
 
-    /**
-     * <h2>linkUserWithTask</h2>
-     * <p>Force adding user to task without asking him</p>
-     * @param userLinkDTO user information
-     * @param token creator token
-     * @deprecated Debug-method to link user with task. Now there is no need to link. 
-     * And why we must to do it???
-     */
-    @PostMapping("/add-user")
-    @Deprecated(forRemoval = true)
-    @ResponseStatus(HttpStatus.CREATED)
-    public void linkUserWithTask(@RequestBody TaskUserLinkDTO userLinkDTO, 
-                                 JwtUserIdAuthenticationToken token) {
-        this.taskService.linkUserWithTask(userLinkDTO, token);
+    @PatchMapping("/subscribe/{taskId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void takeTask(@PathVariable("taskId") UUID taskId,
+                         JwtUserIdAuthenticationToken token) {
+        this.taskService.addUserToTask(token.getUserId(), taskId);
     }
 
-    @PostMapping("/take")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void takeTask(@RequestBody TakeTaskDTO dto,
-                         JwtUserIdAuthenticationToken token) {
-        this.taskService.addUserToTask(token.getUserId(), dto.taskId(), dto.dashboardId());
+    @PatchMapping("/unsubscribe/{taskId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void unsubscribeFromTask(@PathVariable("taskId") UUID taskId,
+                                    JwtUserIdAuthenticationToken token) {
+        this.taskService.removeUserFromTask(token.getUserId(), taskId);
     }
 
     @PatchMapping("/status")

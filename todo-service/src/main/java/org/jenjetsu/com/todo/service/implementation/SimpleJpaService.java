@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 public class SimpleJpaService<E, ID extends Serializable> implements CRUDService<E, ID> {
 
-    private JpaRepository<E, ID> jpaRepository;
+    private final JpaRepository<E, ID> jpaRepository;
     private final Class<? extends E> clazz;
 
     public SimpleJpaService(Class<? extends E> mappedClass, 

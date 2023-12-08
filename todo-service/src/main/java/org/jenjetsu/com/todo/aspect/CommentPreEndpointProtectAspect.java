@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @Aspect
 @RequiredArgsConstructor
-public class CommentPreEndpointProtect {
+public class CommentPreEndpointProtectAspect {
     
     private final TaskCommentRepository commentRep;
     private final TaskRepository taskRep;
