@@ -1,4 +1,4 @@
-package org.jenjetsu.com.mailservice;
+package org.jenjetsu.com.mailservice.model;
 
 import java.util.Map;
 

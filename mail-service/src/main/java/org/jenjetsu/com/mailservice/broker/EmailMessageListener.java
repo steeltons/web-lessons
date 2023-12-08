@@ -1,8 +1,10 @@
-package org.jenjetsu.com.mailservice;
+package org.jenjetsu.com.mailservice.broker;
 
 import java.util.Map;
-import java.util.function.Function;
 
+import org.jenjetsu.com.mailservice.generator.ContextGenerator;
+import org.jenjetsu.com.mailservice.model.MailDTO;
+import org.jenjetsu.com.mailservice.service.EmailSenderService;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class EmailMessageListener {
     
-    private final Map<String, Function<MailDTO, EmailContext>> contextGeneratorMap;
+    private final Map<String, ContextGenerator> contextGeneratorMap;
     private final EmailSenderService emailSenderService;
 
     @SneakyThrows
@@ -26,15 +28,16 @@ public class EmailMessageListener {
     public void hadleSendMessageCommand(MailDTO mailDto) {
         log.info("Message consumed {}", mailDto);
         String mailTypeName = mailDto.messageType().name();
-        Function<MailDTO, EmailContext> contextGenerator = this.contextGeneratorMap.get(mailTypeName);
-        if(contextGenerator == null) {
-            throw new UnsupportedOperationException(mailTypeName + " not supported");
-        }
-        try {
-            this.emailSenderService.sendEmail(contextGenerator.apply(mailDto));
-        } catch (Exception e) {
-            log.error("Error while sending message. Error message: {}", e.getMessage());
-            throw e;
+        ContextGenerator contextGenerator = this.contextGeneratorMap.get(mailTypeName);
+        if(contextGenerator != null) {
+            try {
+                this.emailSenderService.sendEmail(contextGenerator.generateContext(mailDto));
+            } catch (Exception e) {
+                log.error("Error while sending message. Error message: {}", e.getMessage());
+                throw e;
+            }
+        } else {
+            log.error("Operation {} does not support!", mailTypeName);
         }
     }
 

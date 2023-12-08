@@ -1,7 +1,8 @@
-package org.jenjetsu.com.mailservice;
+package org.jenjetsu.com.mailservice.service;
 
 import java.nio.charset.StandardCharsets;
 
+import org.jenjetsu.com.mailservice.model.EmailContext;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="x-apple-disable-message-reformatting">
+</head>
+<body style="font-family: Verdana, Geneva, Tahoma, sans-serif;">
+    <p style="text-transform: uppercase;font-size: 18px;word-wrap: break-word;text-align: justify;width: 100%;">Внимание внешний отправитель!</p>
+    <div style="width: 600px;">
+        <h1>You have new invite</h1>
+        <p style="font-size: 18px;word-wrap: break-word;text-align: justify;width: 100%;">Good day, <b th:text="${receiverUsername}"></b> !</p>
+        <p style="font-size: 18px;word-wrap: break-word;text-align: justify;width: 100%;">User <b th:text="${creatorUsername}"></b> invites you to dashboard <b th:text="${dashboardName}"></b>.</p>
+        <p style="font-size: 18px;word-wrap: break-word;text-align: justify;width: 100%;">Your personal invite link: <a class="invite-link" th:href="" th:text="${inviteLink}" style="text-decoration: underline;color: inherit;"></a></p>
+        <p style="font-size: 18px;word-wrap: break-word;text-align: justify;width: 100%;">Your invite will be active for next <span th:text="${expirationTime}"></span>.</p>
+        <p style="font-size: 18px;word-wrap: break-word;text-align: justify;width: 100%;">Thanks for using our project! Together we will make our lives better!</p> 
+        <table collspacing="0" collpadding="0" border="0" width="100%">
+            <tr>
+                <td width="33%"></td>
+                <td width="33%"><a class="button" th:href="${unsubscribeLink}" style="text-decoration: none;color: inherit;display: block;text-align: center;height: 32px;font-size: 20px;border: 2px black solid;border-radius: 25px;cursor: pointer;">Unsubscribe</a></td>
+                <td width="33%"></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
