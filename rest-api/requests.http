@@ -1,0 +1,49 @@
+### CREATE USER REQUEST
+
+@rootUrl=http://localhost:8080
+@userId=f5fb299c-3904-4b55-97f8-72ca7c1c1ec5
+@taskId=bb6d2a85-8516-4e15-88a3-f955d642db83
+POST {{rootUrl}}/api/v1/users
+Content-Type: application/json
+
+{
+    "username" : "stey",
+    "email" : "someMail1@mail.sru"
+}
+
+### GET USER BY ID
+
+GET {{rootUrl}}/api/v1/users/f5fb299c-3904-4b55-97f8-72ca7c1c1ec5
+
+### ADD TASK TO USER
+
+POST {{rootUrl}}/api/v1/todo
+Content-Type: application/json
+
+{
+    "title" : "Simple title without status and description",
+    "user_id" : "f5fb299c-3904-4b55-97f8-72ca7c1c1ec5"
+}
+
+### GET USER TASKS
+
+GET {{rootUrl}}/api/v1/users/f5fb299c-3904-4b55-97f8-72ca7c1c1ec5/todo
+
+### GET TASK INFORMATION
+GET {{rootUrl}}/api/v1/todo/bb6d2a85-8516-4e15-88a3-f955d642db83
+
+### PUT TASK
+PUT {{rootUrl}}/api/v1/todo
+Content-Type: application/json
+
+{
+    "task_id": "56cdc6f0-a5aa-41e6-93da-5b5b02109408",
+    "title" : "New title",
+    "description" : "ABOBUS"
+}
+
+### DELETE TASK
+DELETE {{rootUrl}}/api/v1/todo/bb6d2a85-8516-4e15-88a3-f955d642db83
+
+### DELETE USER
+DELETE {{rootUrl}}/api/v1/users/f5fb299c-3904-4b55-97f8-72ca7c1c1ec5

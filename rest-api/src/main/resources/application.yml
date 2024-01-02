@@ -1,0 +1,34 @@
+server:
+    port: 8080
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    disable-swagger-default-url: true
+    operations-sorter: method
+    urls:
+      - name: Jenjetsu Todo resource
+        url: /api-docs/swagger-config.yaml
+
+spring:
+    application:
+        name: rest-api
+    datasource:
+        url: jdbc:h2:file:~/todo.db
+        driverClassName: org.h2.Driver
+        username: sa
+        password: password
+    h2:
+        console:
+            enabled: true
+            path: /h2-console
+            settings.trace: false
+            settings.web-allow-others: false
+    jpa:
+        database-platform: org.hibernate.dialect.H2Dialect
+        show-sql: true
+        hibernate:
+            ddl-auto: create-drop
+        properties:
+            hibernate.format_sql: true

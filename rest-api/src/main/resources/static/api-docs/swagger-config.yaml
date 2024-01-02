@@ -1,0 +1,372 @@
+openapi: "3.0.3"
+info:
+  version: 0.0.1
+  title: Jenjetsu Rest Api
+  description: Fourth lab
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Standard server
+    
+paths:
+  /users:
+    post:
+      summary: Create new User
+      tags:
+        - User
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateDTO'
+      responses:
+        '201':
+          description: Successful create User
+          content:
+            application/json:
+              schema:
+                type: object
+                required: 
+                  - user_id
+                properties:
+                  user_id:
+                    type: string
+                    format: uuid
+                    example: 8dcbc64d-8e8f-4a24-b113-dfb41a2e675b
+        '400':
+          description: Try to create User with existed username or email
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - error_message
+                properties:
+                  error_message:
+                    type: string
+                    example: User with username stey is already exists
+        '500':
+          $ref: '#/components/responses/EntityCreateError'
+  /users/{user_id}:
+    parameters:
+      - name: user_id
+        in: path
+        required: true
+        description: User identificator
+        schema:
+          type: string
+          format: uuid
+          example: 8dcbc64d-8e8f-4a24-b113-dfb41a2e675b
+    get:
+      summary: Get user information by id
+      tags: 
+        - User
+      operationId: getUserById
+      responses:
+        '200':
+          description: Successful get user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserReturnDTO'
+        '404':
+          $ref: '#/components/responses/EntityNotFoundError'
+    delete:
+      summary: Delete user with tasks
+      tags: 
+        - User
+      operationId: deleteUserById
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContentResponse'
+        '500':
+          $ref: '#/components/responses/EntityDeleteError'
+  /users/{user_id}/todo:
+    parameters:
+      - name: user_id
+        in: path
+        required: true
+        description: User identificator
+        schema:
+          type: string
+          format: uuid
+          example: 8dcbc64d-8e8f-4a24-b113-dfb41a2e675b
+    get:
+      summary: Get user tasks
+      tags:
+        - User
+      operationId: getUserTasks
+      responses:
+        '200':
+          description: Successful obtaining user tasks
+          content:
+            application/json:
+              schema:
+                type: object
+                required: 
+                  - tasks
+                properties:
+                    tasks:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/TaskReturnDTO'
+        '404':
+          $ref: '#/components/responses/EntityNotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+          
+  /todo:
+    post:
+      summary: Create new user task
+      tags:
+        - Task
+      operationId: createNewTask
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskCreateDTO'
+      responses:
+        '201':
+          description: Successful create Task
+          content:
+            application/json:
+              schema:
+                type: object
+                required: 
+                  - task_id
+                properties:
+                  task_id:
+                    type: string
+                    format: uuid
+                    example: 765a2fbf-4241-45e9-96df-2238d9b5b231
+        '404':
+          $ref: '#/components/responses/EntityNotFoundError'
+        '500':
+          $ref: '#/components/responses/EntityCreateError'
+    put:
+      summary: Update task fields
+      tags:
+        - Task
+      operationId: putTask
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+             $ref: '#/components/schemas/TaskPutDTO'
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContentResponse'
+        '404':
+          $ref: '#/components/responses/EntityNotFoundError'
+        '500':
+          $ref: '#/components/responses/EntityModificationError'
+  /todo/{task_id}:
+    parameters:
+      - name: task_id
+        in: path
+        required: true
+        description: Task identificatior
+        schema:
+          type: string
+          format: uuid
+          example: 765a2fbf-4241-45e9-96df-2238d9b5b231
+    get:
+      summary: Get task information
+      tags:
+        - Task
+      operationId: getTaskById
+      responses:
+        '200':
+          description: Successful obtaining task information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskReturnDTO'
+        '404':
+          $ref: '#/components/responses/EntityNotFoundError'
+    delete:
+      summary: Delete task
+      tags:
+        - Task
+      operationId: deleteTaskById
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContentResponse'
+        '404':
+          $ref: '#/components/responses/EntityNotFoundError'
+        '500':
+          $ref: '#/components/responses/EntityDeleteError'
+                
+          
+          
+components:
+  schemas:
+    UserCreateDTO:
+      type: object
+      required: 
+        - username
+        - email
+      properties:
+        username:
+          type: string
+          example: stey
+        email:
+          type: string
+          format: email
+          example: someMail@mail.sru
+    TaskCreateDTO:
+      type: object
+      required:
+        - title
+        - user_id
+      properties:
+        title:
+          type: string
+          example: Some title
+        description:
+          type: string
+          example: Write something there instead of me pls
+        status:
+          type: string
+          example: Ebashit' vot etimi rychkami nado
+        user_id:
+          type: string
+          format: uuid
+          example: 8dcbc64d-8e8f-4a24-b113-dfb41a2e675b
+          
+    UserReturnDTO:
+      type: object
+      required: 
+        - user_id
+        - username
+        - email
+        - task_amount
+      properties:
+        user_id:
+          type: string
+          format: uuid
+          example: 8dcbc64d-8e8f-4a24-b113-dfb41a2e675b
+        username:
+          type: string
+          example: stey
+        email:
+          type: string
+          format: email
+          example: someMail@mail.sru
+        task_amount:
+          type: integer
+          example: 0
+    TaskReturnDTO:
+      type: object
+      required: 
+        - task_id
+        - title
+        - description
+        - status
+        - user_id
+      properties:
+        task_id:
+          type: string
+          format: uuid
+          example: 765a2fbf-4241-45e9-96df-2238d9b5b231
+        title:
+          type: string
+          example: Some title
+        description:
+          type: string
+          example: Some info
+        status:
+          type: string
+          example: Ebashit' vot etimi rychkami nado
+        user_id:
+          type: string
+          format: uuid
+          example: 8dcbc64d-8e8f-4a24-b113-dfb41a2e675b
+          
+    TaskPutDTO:
+      type: object
+      required:
+        - task_id
+        - title
+      properties:
+        task_id:
+          type: string
+          format: uuid
+          example: 765a2fbf-4241-45e9-96df-2238d9b5b231
+        title:
+          type: string
+          example: New title
+        description:
+          type: string
+          example: ABOBUS
+        status:
+          type: string
+          example: CREATED
+  
+  responses:
+    OkResponse:
+      description: Successful request without body
+    CreatedResponse:
+      description: Successful creating request without body
+    NoContentResponse:
+      description: Successful done work without returning body
+    EntityCreateError:
+      description: Error while saving entity
+      content:
+        application/json:
+          schema:
+            type: object
+            required: 
+              - error_message
+            properties:
+                error_message:
+                  type: string
+                  example: Impossible to save Entity <Entity name>. Error message...
+    EntityNotFoundError:
+      description: Try to get not exist entity by id
+      content:
+        application/json:
+          schema:
+            type: object
+            required: 
+              - error_message
+            properties:
+                error_message:
+                  type: string
+                  example: Imposible to find entity <EntityName> with id <id> 
+    EntityDeleteError:
+      description: Error while delete entity
+      content:
+        application/json:
+          schema:
+            type: object
+            required: 
+              - error_message
+            properties:
+                error_message:
+                  type: string
+                  example: Impossible to delete Entity <EntityName> with id <Id>. Error message...
+    EntityModificationError:
+      description: Error while updating entity
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - error_message
+            properties:
+              error_message:
+                type: string
+                example: Impossible to update Entity <EntityName>. Error message...
+    InternalServerError:
+      description: Some error on server
+            
+        
+    
+        
+        
