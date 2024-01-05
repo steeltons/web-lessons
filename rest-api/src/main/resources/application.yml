@@ -1,5 +1,5 @@
 server:
-    port: 8080
+    port: 8090
 
 springdoc:
   api-docs:
@@ -21,7 +21,7 @@ spring:
         password: password
     h2:
         console:
-            enabled: true
+            enabled: false
             path: /h2-console
             settings.trace: false
             settings.web-allow-others: false
@@ -32,3 +32,8 @@ spring:
             ddl-auto: create-drop
         properties:
             hibernate.format_sql: true
+    security:
+        oauth2:
+            resourceserver:
+                jwt:
+                    issuer-uri: http://localhost:8080/realms/jenjetsu-realm

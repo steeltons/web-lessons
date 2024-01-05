@@ -49,6 +49,7 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    // @PreAuthorize("hasRole('ROLE_MODERATOR')")
     public Map<String, String> createUser(@RequestBody UserCreateDTO createDto) {
         User raw = UserCreateDTO.from(createDto);
         raw = userService.create(raw);
@@ -57,6 +58,7 @@ public class UserController {
 
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    // @PreAuthorize("hasRole('ROLE_MODERATOR')")
     public void deleteUser(@PathVariable("userId") UUID userId) {
         userService.deleteById(userId);
     }
