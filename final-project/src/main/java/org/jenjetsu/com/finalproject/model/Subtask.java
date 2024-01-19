@@ -31,7 +31,7 @@ import lombok.ToString;
 @Checks(
     value = @Check(constraints = "start_date < end_date")
 )
-public class Subtask {
+public class Subtask implements Model<UUID>{
     
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     @Column(columnDefinition = "UUID DEFAULT gen_random_uuid()")
@@ -58,4 +58,21 @@ public class Subtask {
     private Task task;
     @OneToMany(mappedBy = "keyId.subtask", fetch = FetchType.LAZY)
     private List<SubtaskStatusDate> subtaskStatusList;
+
+    @Override
+    public String getModelName() {
+        return "subtask";
+    }
+
+    @Override
+    public UUID getModelId() {
+        return this.getSubtaskId();
+    }
+
+    @Override
+    public Subtask patchModel(Model another) {
+        return null;
+    }
+
+
 }

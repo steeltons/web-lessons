@@ -25,7 +25,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 @Entity(name = "t_user")
-public class User {
+public class User implements Model<UUID> {
     
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     @Column(columnDefinition = "UUID DEFAULT gen_random_uuid()")
@@ -38,7 +38,7 @@ public class User {
     private String firstname;
     @Column(name = "lastname", nullable = true, length = 50)
     private String lastname;
-    @Column(name = "blocked", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(name = "blocked", columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean blocked;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -50,4 +50,25 @@ public class User {
     private List<Project> projectList;
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Subtask> subtaskList;
+
+    @Override
+    public String getModelName() {
+        return "user";
+    }
+
+    @Override
+    public UUID getModelId() {
+        return this.getUserId();
+    }
+
+    @Override
+    public User patchModel(Model another) {
+        if (!User.class.isAssignableFrom(another.getClass())) {
+            throw new RuntimeException("");
+        }
+        User anotherUser = (User) another;
+        return null;
+    }
+
+
 }

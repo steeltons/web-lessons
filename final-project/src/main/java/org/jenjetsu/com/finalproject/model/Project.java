@@ -34,7 +34,7 @@ import lombok.ToString;
 @Checks(
     value = @Check(constraints = "start_date < end_date")
 )
-public class Project {
+public class Project implements Model<UUID>{
     
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     @Column(columnDefinition = "UUID DEFAULT gen_random_uuid()")
@@ -45,7 +45,7 @@ public class Project {
     private Boolean deleted;
     @Column(name = "start_date", columnDefinition = "DATE DEFAULT now()")
     private Date startDate;
-    @Column(name = "end_date", columnDefinition = "DATE DEFAULT now()")
+    @Column(name = "end_date", nullable = false)
     private Date endDate;   
     
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
@@ -62,4 +62,21 @@ public class Project {
     private List<User> userList;
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
     private List<Task> taskList;
+
+    @Override
+    public String getModelName() {
+        return "project";
+    }
+
+    @Override
+    public UUID getModelId() {
+        return this.getProjectId();
+    }
+
+    @Override
+    public Project patchModel(Model another) {
+        return null;
+    }
+
+
 }

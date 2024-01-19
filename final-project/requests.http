@@ -1,0 +1,27 @@
+@rootUrl = http://localhost:7777
+
+POST {{rootUrl}}/api/v1/users
+Content-Type: application/json
+
+{
+    "username" : "stey",
+    "email" : "mail@mail.sru"
+}
+
+### GET
+
+GET {{rootUrl}}/api/v1/users/6a94b779-4d9a-4e8e-b6f3-8055fc5e2e42
+
+### CREATE PROJECT
+
+POST  {{rootUrl}}/api/v1/projects
+Content-Type: application/json
+
+{
+    "name" : "test",
+    "end_date" : "25.01.2024"
+}
+
+### GET PROJECT
+
+GET {{rootUrl}}/api/v1/projects/0d4ceab2-2a53-4ee6-a407-ea71f75bcc8c

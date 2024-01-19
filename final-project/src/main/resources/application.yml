@@ -9,7 +9,7 @@ spring:
         url: jdbc:postgresql://localhost:5001/jenjetsu_database_v2
     jpa:
       hibernate:
-        ddl-auto: create
+        ddl-auto: validate
       show-sql: true
       properties:
         hibernate:
