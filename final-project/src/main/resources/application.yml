@@ -1,0 +1,17 @@
+server:
+    port: 7777
+
+spring:
+    datasource:
+        username: Stey
+        password: 1228
+        driver-class-name: org.postgresql.Driver
+        url: jdbc:postgresql://localhost:5001/jenjetsu_database_v2
+    jpa:
+      hibernate:
+        ddl-auto: create
+      show-sql: true
+      properties:
+        hibernate:
+          format_sql: true
+          dialect: org.hibernate.dialect.PostgreSQLDialect
