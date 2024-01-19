@@ -2,7 +2,6 @@ package org.jenjetsu.com.finalproject.config;
 
 import org.jenjetsu.com.finalproject.model.SubtaskStatus;
 import org.jenjetsu.com.finalproject.model.SubtaskStatusDate;
-import org.jenjetsu.com.finalproject.model.SubtaskStatusDate.SubtaskStatusDateKey;
 import org.jenjetsu.com.finalproject.model.TaskDependency;
 import org.jenjetsu.com.finalproject.repository.SubtaskStatusDateRepository;
 import org.jenjetsu.com.finalproject.repository.SubtaskStatusRepository;
@@ -26,7 +25,7 @@ public class SimpleJpaServiceConfig {
     }
 
     @Bean
-    public CRUDService<SubtaskStatusDate, SubtaskStatusDateKey> subtaskStatusDate(SubtaskStatusDateRepository rep) {
+    public CRUDService<SubtaskStatusDate, Long> subtaskStatusDate(SubtaskStatusDateRepository rep) {
         return new SimpleJpaService<>(SubtaskStatusDate.class, rep);
     }
 }

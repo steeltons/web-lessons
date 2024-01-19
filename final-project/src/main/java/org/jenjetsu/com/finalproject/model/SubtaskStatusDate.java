@@ -7,87 +7,50 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+@Getter @Setter @ToString
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity(name = "t_subtask_status_date")
-public class SubtaskStatusDate {
+@Builder
+public class SubtaskStatusDate implements Model<Long>{
 
-    @EmbeddedId
-    private SubtaskStatusDateKey keyId;
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long subtaskStatusDateId;
+
     @Getter @Setter
     private Date date;
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "subtask_id")
+    private Subtask subtask;
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "subtask_status_id")
+    private SubtaskStatus subtaskStatus; 
 
-    public SubtaskStatusDate() {
-        this.keyId = new SubtaskStatusDateKey();
-        this.date = null;
+    @Override
+    public Long getModelId() {
+        return this.getSubtaskStatusDateId();
     }
 
-    public SubtaskStatusDate(Subtask subtask, SubtaskStatus subtaskStatus, Date date) {
-        this.keyId = new SubtaskStatusDateKey(subtask, subtaskStatus);
-        this.date = date;
+    @Override
+    public String getModelName() {
+        return "subtask_status_date";
     }
 
-    @Getter @Setter @ToString
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Embeddable
-    public class SubtaskStatusDateKey implements Serializable{
-        @ManyToOne(optional = false, fetch = FetchType.LAZY)
-        @JoinColumn(name = "subtask_id")
-        private Subtask subtask;
-        @ManyToOne(optional = false, fetch = FetchType.LAZY)
-        @JoinColumn(name = "subtask_status_id")
-        private SubtaskStatus subtaskStatus; 
+    @Override
+    public SubtaskStatusDate patchModel(Model another) {
+        return null;
     }
-
-    public void setSubtask(Subtask subtask) {
-        this.keyId.subtask = subtask;
-    }
-
-    public void setSubtaskStatus(SubtaskStatus subtaskStatus) {
-        this.keyId.subtaskStatus = subtaskStatus;
-    }
-
-    public Subtask getSubtask() {
-        return this.keyId.subtask;
-    }
-
-    public SubtaskStatus getSubtaskStatus() {
-        return this.keyId.subtaskStatus;
-    }
-
-    public static SubtaskStatusDateBuilder builder() {
-        return new SubtaskStatusDateBuilder();
-    }
-
-    public static class SubtaskStatusDateBuilder {
-        private Subtask subtask;
-        private SubtaskStatus subtaskStatus;
-        private Date date;
-
-        public SubtaskStatusDateBuilder subtask(Subtask subtask) {
-            this.subtask = subtask;
-            return this;
-        }
-
-        public SubtaskStatusDateBuilder subtaskStatus(SubtaskStatus subtaskStatus) {
-            this.subtaskStatus = subtaskStatus;
-            return this;
-        }
-
-        public SubtaskStatusDateBuilder date(Date date) {
-            this.date = date;
-            return this;
-        }
-
-        public SubtaskStatusDate build() {
-            return new SubtaskStatusDate(this.subtask, this.subtaskStatus, this.date);
-        }
-    }
+    
 }

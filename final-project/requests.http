@@ -1,4 +1,5 @@
-@rootUrl = http://localhost:7777
+@rootUrl=http://localhost:7777
+@userID=5d57002a-5b62-4b59-abd6-1cb3d326ccfd
 
 POST {{rootUrl}}/api/v1/users
 Content-Type: application/json
@@ -10,7 +11,7 @@ Content-Type: application/json
 
 ### GET
 
-GET {{rootUrl}}/api/v1/users/6a94b779-4d9a-4e8e-b6f3-8055fc5e2e42
+GET {{rootUrl}}/api/v1/users/{{userID}}
 
 ### CREATE PROJECT
 

@@ -56,7 +56,7 @@ public class Subtask implements Model<UUID>{
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "task_id", nullable = false)
     private Task task;
-    @OneToMany(mappedBy = "keyId.subtask", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "subtask", fetch = FetchType.LAZY)
     private List<SubtaskStatusDate> subtaskStatusList;
 
     @Override

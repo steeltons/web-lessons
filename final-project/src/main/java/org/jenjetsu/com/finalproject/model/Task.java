@@ -55,6 +55,8 @@ public class Task implements Model<UUID>{
     private Project project;
     @OneToMany(mappedBy = "task", fetch = FetchType.LAZY)
     private List<Subtask> subtaskList;
+    @OneToMany(mappedBy = "task", fetch = FetchType.LAZY)
+    private List<TaskDependency> taskDependencyList;
 
     @Override
     public String getModelName() {
