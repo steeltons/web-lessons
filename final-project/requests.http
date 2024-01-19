@@ -24,4 +24,4 @@ Content-Type: application/json
 
 ### GET PROJECT
 
-GET {{rootUrl}}/api/v1/projects/0d4ceab2-2a53-4ee6-a407-ea71f75bcc8c
+GET {{rootUrl}}/api/v1/projects/92ee953c-3cec-4410-9bb4-5797a95c4b2a

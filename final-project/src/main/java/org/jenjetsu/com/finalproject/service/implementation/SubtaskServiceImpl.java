@@ -17,4 +17,11 @@ public class SubtaskServiceImpl extends SimpleJpaService<Subtask, UUID>
         super(Subtask.class, subtaskRep);
         this.subtaskRep = subtaskRep;
     }
+
+    @Override
+    protected Subtask createEntity(Subtask raw) {
+        raw.setSubtaskId(null);
+        raw.setDeleted(false);
+        return raw;
+    }
 }

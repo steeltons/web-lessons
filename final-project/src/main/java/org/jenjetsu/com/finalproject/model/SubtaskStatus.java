@@ -17,10 +17,27 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 @Entity(name = "t_subtask_status")
-public class SubtaskStatus {
+public class SubtaskStatus implements Model<Integer>{
     
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer subtaskStatusId;
     @Column(name = "name", length = 63, nullable = false, unique = true)
     private String name;
+
+    @Override
+    public Integer getModelId() {
+        return this.getSubtaskStatusId();
+    }
+
+    @Override
+    public String getModelName() {
+        return "subtask_status";
+    }
+
+    @Override
+    public Model patchModel(Model another) {
+        return null;
+    }
+
+
 }

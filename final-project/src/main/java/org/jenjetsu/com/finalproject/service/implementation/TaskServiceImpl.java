@@ -17,4 +17,11 @@ public class TaskServiceImpl extends SimpleJpaService<Task, UUID>
         super(Task.class, taskRep);
         this.taskRep = taskRep;
     }
+
+    @Override
+    public Task createEntity(Task raw) {
+        raw.setTaskId(null);
+        raw.setDeleted(false);
+        return super.createEntity(raw);
+    }
 }
