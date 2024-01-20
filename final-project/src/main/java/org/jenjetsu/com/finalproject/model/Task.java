@@ -69,7 +69,31 @@ public class Task implements Model<UUID>{
     }
 
     @Override
-    public Task patchModel(Model another) {
-        return null;
+    public Task patchModel(Model anoth) {
+        if (!this.getClass().isAssignableFrom(anoth.getClass())) {
+            throw new IllegalArgumentException("Another clas is not Task");
+        }
+        Task another = (Task) anoth;
+        return Task.builder()
+                   .taskId(this.taskId)
+                   .title(checkSimilarity(this.title, another.title)
+                        ? this.title : another.title)
+                   .description(checkSimilarity(this.description, another.description)
+                        ? this.description : another.description)
+                   .startDate(checkSimilarity(this.startDate, another.startDate)
+                        ? this.startDate : another.startDate)
+                   .endDate(checkSimilarity(this.endDate, another.endDate)
+                        ? this.endDate : another.endDate)
+                   .deleted(checkSimilarity(this.deleted, another.deleted)
+                        ? this.deleted : another.deleted)
+                   .creator(checkSimilarity(this.creator.getUserId(), another.getCreator().getUserId())
+                        ? this.getCreator() : another.getCreator())
+                   .project(checkSimilarity(this.getProject().getProjectId(), another.getProject().getProjectId())
+                        ? this.getProject() : another.getProject())
+                   .build();
+    }
+
+    private boolean checkSimilarity(Object myVal, Object anotherVal) {
+        return anotherVal != null && anotherVal.equals(myVal);
     }
 }

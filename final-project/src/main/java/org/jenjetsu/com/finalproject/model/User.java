@@ -67,8 +67,23 @@ public class User implements Model<UUID> {
             throw new RuntimeException("");
         }
         User anotherUser = (User) another;
-        return null;
+        return User.builder()
+                    .userId(this.userId)
+                    .username(checkSimilarity(this.username, anotherUser.username) 
+                                ? this.username : anotherUser.username)
+                    .email(checkSimilarity(this.email, anotherUser.email)
+                                ? this.email : anotherUser.email)
+                    .firstname(checkSimilarity(this.firstname, anotherUser.firstname)
+                                ? this.firstname : anotherUser.firstname)
+                    .lastname(checkSimilarity(this.lastname, anotherUser.lastname)
+                                ? this.lastname : anotherUser.lastname)
+                    .blocked(checkSimilarity(this.blocked, anotherUser.blocked)
+                                ? this.blocked : anotherUser.blocked)
+                    .build();
     }
 
+    private boolean checkSimilarity(Object myVal, Object anotherVal) {
+        return anotherVal != null && anotherVal.equals(myVal);
+    }
 
 }

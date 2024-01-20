@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.jenjetsu.com.finalproject.dto.UserCreateDTO;
 import org.jenjetsu.com.finalproject.dto.UserReturnDTO;
 import org.jenjetsu.com.finalproject.model.User;
+import org.jenjetsu.com.finalproject.security.model.BearerTokenAuthentication;
 import org.jenjetsu.com.finalproject.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,27 +24,25 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/users")
+@RequiredArgsConstructor
 @Tag(name = "Users", description = "Controller with user endpoints")
 @SecurityRequirement(name = "JWT")
 public class UserController {
     
     private final UserService userService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
-
-    @GetMapping("/{userId}")
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public UserReturnDTO getUserById(@RequestBody UUID userId) {
-        User user = this.userService.readById(userId);
+    public UserReturnDTO getUserById(BearerTokenAuthentication token) {
+        User user = this.userService.readById(token.getUserId());
         return UserReturnDTO.convert(user);
     }
 
-    @GetMapping
+    @GetMapping("/all")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('MANAGER')")
     public Map<String, List<UserReturnDTO>> getAllUsers() {

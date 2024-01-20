@@ -6,7 +6,10 @@ import java.util.UUID;
 
 import org.jenjetsu.com.finalproject.dto.ProjectCreateDTO;
 import org.jenjetsu.com.finalproject.dto.ProjectReturnDTO;
+import org.jenjetsu.com.finalproject.dto.UserProjectDTO;
 import org.jenjetsu.com.finalproject.model.Project;
+import org.jenjetsu.com.finalproject.model.User;
+import org.jenjetsu.com.finalproject.security.model.BearerTokenAuthentication;
 import org.jenjetsu.com.finalproject.service.ProjectService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -52,16 +55,32 @@ public class ProjectController{
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Map<String, String> createProject(@RequestBody ProjectCreateDTO dto) {
+    public Map<String, String> createProject(@RequestBody ProjectCreateDTO dto,
+                                             BearerTokenAuthentication token) {
         Project raw = ProjectCreateDTO.convert(dto);
+        User creator = User.builder().userId(token.getUserId()).build();
+        raw.setCreatedBy(creator);
+        raw.getUserList().add(creator);
         raw = this.projectService.create(raw);
         return Map.of("project_id", raw.getProjectId().toString());
     }
+
+    @PostMapping("/invite")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void inviteUserToProject(@RequestBody UserProjectDTO dto) {
+        this.projectService.addUserToProject(dto.userId(), dto.projectId());
+    }  
 
     @DeleteMapping("/{projectId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("projectId") UUID projectId) {
         this.projectService.deleteById(projectId);
+    }
+
+    @DeleteMapping("/kick")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void kickUserFromProject(@RequestBody UserProjectDTO dto) {
+        this.projectService.removeUserFromProject(dto.userId(), dto.projectId());
     }
 
     @PatchMapping

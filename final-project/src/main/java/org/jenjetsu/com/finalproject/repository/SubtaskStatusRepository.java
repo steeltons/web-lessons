@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SubtaskStatusRepository extends JpaRepository<SubtaskStatus, Integer> {
     
+    public boolean existsByName(String name);
 }

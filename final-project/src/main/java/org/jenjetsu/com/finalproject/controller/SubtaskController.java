@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.jenjetsu.com.finalproject.dto.SubtaskCreateDTO;
 import org.jenjetsu.com.finalproject.dto.SubtaskReturnDTO;
 import org.jenjetsu.com.finalproject.model.Subtask;
+import org.jenjetsu.com.finalproject.security.model.BearerTokenAuthentication;
 import org.jenjetsu.com.finalproject.service.SubtaskService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -39,6 +41,21 @@ public class SubtaskController{
     }
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public Map<String, List<SubtaskReturnDTO>> getAllMySubtasks(
+                                @RequestParam(name = "projectId", required = false) UUID projectId,
+                                @RequestParam(name = "statusName", required = false) String statusName,
+                                BearerTokenAuthentication token) {
+        List<SubtaskReturnDTO> dtos = this.subtaskService
+                                          .readAllUserSubtasksByParams(token.getUserId(), projectId, statusName)
+                                          .stream()
+                                          .map(SubtaskReturnDTO::convert)
+                                          .toList();
+        return Map.of("subtask_list", dtos);
+
+    }
+
+    @GetMapping("/all")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('MANAGER')")
     public Map<String, List<SubtaskReturnDTO>> getAllTasks() {

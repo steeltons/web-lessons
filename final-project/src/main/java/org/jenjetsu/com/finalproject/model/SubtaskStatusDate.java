@@ -1,10 +1,7 @@
 package org.jenjetsu.com.finalproject.model;
 
-import java.io.Serializable;
 import java.sql.Date;
 
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -49,8 +46,25 @@ public class SubtaskStatusDate implements Model<Long>{
     }
 
     @Override
-    public SubtaskStatusDate patchModel(Model another) {
-        return null;
+    public SubtaskStatusDate patchModel(Model anoth) {
+        if (!this.getClass().isAssignableFrom(anoth.getClass())) {
+            throw new IllegalArgumentException("Another is not same to SubtaskStatusDate");
+        }
+        SubtaskStatusDate another = (SubtaskStatusDate) anoth;
+        return SubtaskStatusDate.builder() 
+                                .subtaskStatusDateId(this.subtaskStatusDateId)
+                                .subtask(checkSimilarity(this.subtask.getSubtaskId(), another.subtask.getSubtaskId())
+                                    ? this.getSubtask() : another.getSubtask())
+                                .subtaskStatus(checkSimilarity(this.getSubtaskStatus().getSubtaskStatusId(), 
+                                                               another.getSubtaskStatus().getSubtaskStatusId())
+                                    ? this.getSubtaskStatus() : another.getSubtaskStatus())
+                                .date(checkSimilarity(this.getDate(), another.getDate())
+                                    ? this.getDate() : another.getDate())
+                                .build();
+    }
+
+    private boolean checkSimilarity(Object myVal, Object anotherVal) {
+        return anotherVal != null && anotherVal.equals(myVal);
     }
     
 }

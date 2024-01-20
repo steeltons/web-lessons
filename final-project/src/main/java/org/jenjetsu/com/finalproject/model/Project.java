@@ -74,9 +74,27 @@ public class Project implements Model<UUID>{
     }
 
     @Override
-    public Project patchModel(Model another) {
-        return null;
+    public Project patchModel(Model anoth) {
+        if (!this.getClass().isAssignableFrom(anoth.getClass())) {
+            throw new IllegalArgumentException("Another is not same to Project");
+        }
+        Project another = (Project) anoth;
+        return Project.builder()
+                        .projectId(this.projectId)
+                        .name(checkSimilarity(this.name, another.name)
+                            ? this.name : another.name)
+                        .startDate(checkSimilarity(this.startDate, another.startDate)
+                            ? this.startDate : another.startDate)
+                       .endDate(checkSimilarity(this.endDate, another.endDate)
+                            ? this.endDate : another.endDate)
+                       .deleted(checkSimilarity(this.deleted, another.deleted)
+                            ? this.deleted : another.deleted)
+                       .createdBy(checkSimilarity(this.createdBy.getUserId(), another.getCreatedBy().getUserId())
+                            ? this.getCreatedBy() : another.getCreatedBy())
+                        .build();
     }
 
-
+    private boolean checkSimilarity(Object myVal, Object anotherVal) {
+        return anotherVal != null && anotherVal.equals(myVal);
+    }
 }

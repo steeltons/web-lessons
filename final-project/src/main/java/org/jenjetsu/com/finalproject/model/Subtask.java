@@ -70,9 +70,33 @@ public class Subtask implements Model<UUID>{
     }
 
     @Override
-    public Subtask patchModel(Model another) {
-        return null;
+    public Subtask patchModel(Model anoth) {
+        if (!this.getClass().isAssignableFrom(anoth.getClass())) {
+            throw new IllegalArgumentException("Another is not same to Subtask");
+        }
+        Subtask another = (Subtask) anoth;
+        return Subtask.builder()
+                        .subtaskId(this.subtaskId)
+                        .title(checkSimilarity(this.title, another.title)
+                            ? this.title : another.title)
+                        .description(checkSimilarity(this.description, another.description)
+                            ? this.description : another.description)
+                        .startDate(checkSimilarity(this.startDate, another.startDate)
+                            ? this.startDate : another.startDate)
+                        .endDate(checkSimilarity(this.endDate, another.endDate)
+                            ? this.endDate : another.endDate)
+                        .deleted(checkSimilarity(this.deleted, another.deleted)
+                            ? this.deleted : another.deleted)
+                        .creator(checkSimilarity(this.creator.getUserId(), another.getCreator().getUserId())
+                            ? this.getCreator() : another.getCreator())
+                        .user(checkSimilarity(this.getUser().getUserId(), another.getUser().getUserId())
+                            ? this.getUser() : another.getUser())
+                        .task(checkSimilarity(this.getTask().getTaskId(), another.getTask().getTaskId())
+                            ? this.getTask() : another.getTask())
+                      .build();
     }
 
-
+    private boolean checkSimilarity(Object myVal, Object anotherVal) {
+        return anotherVal != null && anotherVal.equals(myVal);
+    }
 }

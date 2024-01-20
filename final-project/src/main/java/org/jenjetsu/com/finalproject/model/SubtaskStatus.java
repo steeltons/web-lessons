@@ -35,9 +35,19 @@ public class SubtaskStatus implements Model<Integer>{
     }
 
     @Override
-    public Model patchModel(Model another) {
-        return null;
+    public SubtaskStatus patchModel(Model anoth) {
+        if (!this.getClass().isAssignableFrom(anoth.getClass())) {
+            throw new IllegalArgumentException("Another is not same to SubtaskStatus");
+        }
+        SubtaskStatus another = (SubtaskStatus) anoth;
+        return SubtaskStatus.builder()
+                            .subtaskStatusId(this.subtaskStatusId)
+                            .name(checkSimilarity(this.name, another.name) 
+                                ? this.name : another.name)
+                            .build();
     }
 
-
+    private boolean checkSimilarity(Object myVal, Object anotherVal) {
+        return anotherVal != null && anotherVal.equals(myVal);
+    }
 }
