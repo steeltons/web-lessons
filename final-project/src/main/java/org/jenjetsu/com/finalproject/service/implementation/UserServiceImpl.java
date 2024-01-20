@@ -1,19 +1,17 @@
 package org.jenjetsu.com.finalproject.service.implementation;
 
+import static java.lang.String.format;
+import java.util.List;
 import java.util.UUID;
 
 import org.jenjetsu.com.finalproject.exception.EntityNotFoundException;
+import org.jenjetsu.com.finalproject.model.Subtask;
 import org.jenjetsu.com.finalproject.model.User;
+import org.jenjetsu.com.finalproject.repository.SubtaskRepository;
 import org.jenjetsu.com.finalproject.repository.UserRepository;
 import org.jenjetsu.com.finalproject.service.UserService;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-
-import static java.lang.String.format;
-import java.util.List;
-
-import org.jenjetsu.com.finalproject.model.Subtask;
-import org.jenjetsu.com.finalproject.repository.SubtaskRepository;
 
 @Service
 public class UserServiceImpl extends SimpleJpaService<User, UUID>
@@ -49,5 +47,13 @@ public class UserServiceImpl extends SimpleJpaService<User, UUID>
     public List<Subtask> readUserSubtasks(UUID userId, UUID projectId, boolean skipCompleted) {
 
         return null;
+    }
+
+    public boolean existsByUsername(String username) {
+        return (username != null) && this.userRep.existsByUsername(username);
+    }
+
+    public boolean existsByEmail(String email) {
+        return (email != null) && this.userRep.existsByEmail(email);
     }
 }

@@ -10,6 +10,7 @@ public interface UserService extends CRUDService<User, UUID> {
     
     public UUID readUserIdByUsername(String username);
     public UUID readUserIdByEmail(String email);
-
     public List<Subtask> readUserSubtasks(UUID userId, UUID projectId, boolean skipCompleted);
+    public boolean existsByUsername(String username);
+    public boolean existsByEmail(String email);
 }

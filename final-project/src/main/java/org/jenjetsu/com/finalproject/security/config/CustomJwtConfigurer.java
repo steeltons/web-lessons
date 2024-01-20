@@ -17,6 +17,7 @@ import org.jenjetsu.com.finalproject.security.jwt.JwtAuthenticationConverter;
 import org.jenjetsu.com.finalproject.security.jwt.JwtDecoder;
 import org.jenjetsu.com.finalproject.security.provider.JWtTokenCacheAuthenticationProvider;
 import org.jenjetsu.com.finalproject.security.provider.JwtTokenAuthenticationProvider;
+import org.jenjetsu.com.finalproject.service.UserService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.HttpHeaders;
@@ -83,10 +84,12 @@ public class CustomJwtConfigurer extends AbstractHttpConfigurer<CustomJwtConfigu
     private RequestMatcher requestMatcher;
     @Setter
     private OAuth2TokenRepository tokenRepository;
+    private final UserService userService;
 
-    public CustomJwtConfigurer(ApplicationContext context) {
+    public CustomJwtConfigurer(ApplicationContext context, UserService userService) {
         Assert.notNull(context, "ApplicationContext cannot be null");
         this.context = context;
+        this.userService = userService;
     }
 
     @Override
@@ -180,7 +183,7 @@ public class CustomJwtConfigurer extends AbstractHttpConfigurer<CustomJwtConfigu
 
     Converter<JWT, ? extends AbstractAuthenticationToken> getAuthenticationTokenConverter() {
         if (this.authenticationTokenConverter == null) {
-            authenticationTokenConverter = new JwtAuthenticationConverter();
+            authenticationTokenConverter = new JwtAuthenticationConverter(userService);
         }
         return this.authenticationTokenConverter;
     }
