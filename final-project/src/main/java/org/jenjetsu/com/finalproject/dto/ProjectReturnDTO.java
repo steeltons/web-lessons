@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.jenjetsu.com.finalproject.model.Project;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -22,9 +23,11 @@ public record ProjectReturnDTO(
     String projectName, 
     @JsonProperty(value = "start_date")
     @Schema(type = "string", format = "date", example = "15.12.2023")
+    @JsonSerialize(using = DTOInstantSerializer.class)
     Instant startDate, 
     @JsonProperty(value = "end_date", required = true)
     @Schema(type = "string", format = "date", example = "31.12.2023")
+    @JsonSerialize(using = DTOInstantSerializer.class)
     Instant endDate, 
     @Schema(type = "boolean", example = "false")
     boolean deleted) {
@@ -33,8 +36,8 @@ public record ProjectReturnDTO(
         return ProjectReturnDTO.builder()
                                .projectId(project.getProjectId())
                                .projectName(project.getName())
-                               .startDate(project.getStartDate().toInstant())
-                               .endDate(project.getEndDate().toInstant())
+                               .startDate(Instant.ofEpochMilli(project.getStartDate().getTime()))
+                               .endDate(Instant.ofEpochMilli(project.getEndDate().getTime()))
                                .deleted(project.getDeleted())
                                .build();
     }

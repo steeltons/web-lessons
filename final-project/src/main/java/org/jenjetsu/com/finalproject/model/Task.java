@@ -1,12 +1,14 @@
 package org.jenjetsu.com.finalproject.model;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.annotations.Check;
 import org.hibernate.annotations.Checks;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -53,11 +55,18 @@ public class Task implements Model<UUID>{
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
     private Project project;
-    @OneToMany(mappedBy = "task", fetch = FetchType.LAZY)
-    private List<Subtask> subtaskList;
-    @OneToMany(mappedBy = "task", fetch = FetchType.LAZY)
-    private List<TaskDependency> taskDependencyList;
+    @OneToMany(mappedBy = "task", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<Subtask> subtaskList = new ArrayList<>();
+    @OneToMany(mappedBy = "task", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<TaskDependency> taskDependencyList = new ArrayList<>();
 
+    public Task(UUID taskId, Date startDate, Date endDate) {
+          this.taskId = taskId;
+          this.startDate = startDate;
+          this.endDate = endDate;
+    }
     @Override
     public String getModelName() {
         return "task";

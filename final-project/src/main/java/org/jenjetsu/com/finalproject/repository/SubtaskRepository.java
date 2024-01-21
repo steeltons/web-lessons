@@ -38,12 +38,49 @@ public interface SubtaskRepository extends JpaRepository<Subtask, UUID>{
         value = """
                     SELECT ts
                     FROM t_subtask ts
-                    WHERE ts.userId = :userId
-                    AND ts.startDate >= :startDate
-                    AND ts.endDate <= :endDate
+                    LEFT OUTER JOIN ts.task tt
+                    WHERE ts.user.userId = :userId
+                    AND (ts.startDate >= :startDate OR ts.endDate <= :endDate)
+                    AND tt.project.projectId = :projectId
                 """
     )
     public List<Subtask> findAllUserSubtaskBetweenDates(@Param("userId") UUID userId,
                                                         @Param("startDate") Date startDate,
-                                                        @Param("endDate") Date endDate);
+                                                        @Param("endDate") Date endDate,
+                                                        @Param("projectId") UUID projectId);
+
+    @Query(
+        value = """
+                    SELECT 
+                        new org.jenjetsu.com.finalproject.model.Subtask(
+                            ts.subtaskId, ts.startDate, 
+                            ts.endDate, ts.user.userId)
+                    FROM t_subtask ts
+                    WHERE ts.subtaskId = :subtaskId
+                """
+    )
+    public Subtask getSubtaskInformationToCheckCross(@Param("subtaskId") UUID subtaskId);
+
+    @Query(
+        value = """
+                    SELECT EXISTS(
+                        SELECT 1 FROM t_task tt
+                        WHERE tt.taskId = :taskId
+                        AND (tt.startDate > :startDate OR tt.endDate < :endDate)
+                    )
+                """
+    )
+    public boolean isSubtaskLeadTimeStepOverTask(@Param("taskId") UUID taskId,
+                                                 @Param("startDate") Date startDate,
+                                                 @Param("endDate") Date endDate);
+
+    @Query(
+        value = """
+                    SELECT tt.project.projectId
+                    FROM t_task tt
+                    LEFT OUTER JOIN tt.subtaskList ts
+                    WHERE ts.subtaskId = :subtaskId 
+                """
+    )
+    public UUID findProjectIdBySubtaskId(@Param("subtaskId") UUID subtaskId);
 }

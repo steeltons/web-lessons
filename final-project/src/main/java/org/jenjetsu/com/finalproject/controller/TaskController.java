@@ -7,6 +7,9 @@ import java.util.UUID;
 import org.jenjetsu.com.finalproject.dto.TaskCreateDTO;
 import org.jenjetsu.com.finalproject.dto.TaskReturnDTO;
 import org.jenjetsu.com.finalproject.model.Task;
+import org.jenjetsu.com.finalproject.model.User;
+import org.jenjetsu.com.finalproject.repository.TaskDependencyRepository;
+import org.jenjetsu.com.finalproject.security.model.BearerTokenAuthentication;
 import org.jenjetsu.com.finalproject.service.TaskService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,9 +29,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class TaskController {
     
     private final TaskService taskService;
+    private final TaskDependencyRepository dependencyRep;
 
-    public TaskController(TaskService taskService) {
+    public TaskController(TaskService taskService,
+                          TaskDependencyRepository dependencyRep) {
         this.taskService = taskService;
+        this.dependencyRep = dependencyRep;
     }
 
     @GetMapping("/{Id}")
@@ -51,8 +57,10 @@ public class TaskController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Map<String, String> createTask(@RequestBody TaskCreateDTO dto) {
+    public Map<String, String> createTask(@RequestBody TaskCreateDTO dto,
+                                          BearerTokenAuthentication token) {
         Task raw = TaskCreateDTO.convert(dto);
+        raw.setCreator(User.builder().userId(token.getUserId()).build());
         raw = this.taskService.create(raw);
         return Map.of("task_id", raw.getTaskId().toString());
     }

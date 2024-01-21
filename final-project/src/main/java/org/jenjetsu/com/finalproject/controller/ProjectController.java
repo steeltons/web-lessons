@@ -19,11 +19,10 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @RestController
 @RequestMapping("api/v1/projects")
@@ -85,7 +84,7 @@ public class ProjectController{
 
     @PatchMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void putchProject(@RequestBody ProjectReturnDTO dto) {
+    public void patchProject(@RequestBody ProjectReturnDTO dto) {
         Project mergingProject = ProjectReturnDTO.convertToProject(dto);
         Project mergableProject = this.projectService.readById(dto.projectId());
         Project newProject = mergableProject.patchModel(mergingProject);

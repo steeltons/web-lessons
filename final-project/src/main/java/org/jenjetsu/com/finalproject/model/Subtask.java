@@ -1,6 +1,7 @@
 package org.jenjetsu.com.finalproject.model;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -57,7 +58,15 @@ public class Subtask implements Model<UUID>{
     @JoinColumn(name = "task_id", nullable = false)
     private Task task;
     @OneToMany(mappedBy = "subtask", fetch = FetchType.LAZY)
-    private List<SubtaskStatusDate> subtaskStatusList;
+    @Builder.Default
+    private List<SubtaskStatusDate> subtaskStatusList = new ArrayList<>();
+
+    public Subtask(UUID subtaskId, Date startDate, Date endDate, UUID userId) {
+        this.subtaskId = subtaskId;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.user = User.builder().userId(userId).build();
+    }
 
     @Override
     public String getModelName() {

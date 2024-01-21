@@ -1,6 +1,7 @@
 package org.jenjetsu.com.finalproject.model;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -59,9 +60,11 @@ public class Project implements Model<UUID>{
         joinColumns = @JoinColumn(name = "project_id"),
         inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private List<User> userList;
+    @Builder.Default
+    private List<User> userList = new ArrayList<>();
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
-    private List<Task> taskList;
+    @Builder.Default
+    private List<Task> taskList = new ArrayList<>();
 
     @Override
     public String getModelName() {

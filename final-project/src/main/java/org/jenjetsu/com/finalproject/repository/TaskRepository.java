@@ -24,4 +24,37 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
                                      @Param("startDate") Date startDate, 
                                      @Param("endDate") Date endDate);
     
+    @Query(
+        value = """
+                    SELECT 
+                        new org.jenjetsu.com.finalproject.model.Task(
+                            tt.taskId, tt.startDate, tt.endDate) 
+                    FROM t_task tt
+                    WHERE tt.taskId = :taskId
+                """
+    )
+    public Task findTaskInformationForCheckCross(@Param("taskId") UUID taskId);
+
+    @Query(
+        value = """
+                    SELECT EXISTS (
+                        SELECT 1 FROM t_project tp
+                        WHERE tp.projectId = :projectId
+                        AND (tp.startDate > :startDate OR tp.endDate < :endDate)
+                    )
+                """
+    )
+    public boolean isTaskDatesNotOverProject(@Param("projectId") UUID projectId,
+                                            @Param("startDate") Date startDate,
+                                            @Param("endDate") Date endDate);
+
+    @Query(
+        value = """
+                    SELECT tp.projectId
+                    FROM t_project tp
+                    LEFT JOIN tp.taskList tt
+                    WHERE tt.taskId = :taskId
+                """
+    )
+    public UUID findProjectIdByTaskId(@Param("taskId") UUID taskId);
 }

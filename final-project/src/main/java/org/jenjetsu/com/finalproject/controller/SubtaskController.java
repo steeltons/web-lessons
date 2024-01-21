@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.jenjetsu.com.finalproject.dto.SubtaskCreateDTO;
 import org.jenjetsu.com.finalproject.dto.SubtaskReturnDTO;
 import org.jenjetsu.com.finalproject.model.Subtask;
+import org.jenjetsu.com.finalproject.model.User;
 import org.jenjetsu.com.finalproject.security.model.BearerTokenAuthentication;
 import org.jenjetsu.com.finalproject.service.SubtaskService;
 import org.springframework.http.HttpStatus;
@@ -68,10 +69,12 @@ public class SubtaskController{
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Map<String, String> createTask(@RequestBody SubtaskCreateDTO dto) {
+    public Map<String, String> createTask(@RequestBody SubtaskCreateDTO dto,
+                                          BearerTokenAuthentication token) {
         Subtask raw = SubtaskCreateDTO.convert(dto);
+        raw.setCreator(User.builder().userId(token.getUserId()).build());
         raw = this.subtaskService.create(raw);
-        return Map.of("task_id", raw.getSubtaskId().toString());
+        return Map.of("subtask_id", raw.getSubtaskId().toString());
     }
 
     @DeleteMapping("/{projectId}")

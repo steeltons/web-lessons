@@ -2,13 +2,16 @@ package org.jenjetsu.com.finalproject.dto;
 
 import java.sql.Date;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 import org.jenjetsu.com.finalproject.model.Task;
+import org.jenjetsu.com.finalproject.model.TaskDependency;
 import org.jenjetsu.com.finalproject.model.User;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -27,15 +30,19 @@ public record TaskReturnDTO(
         @Schema(type = "booelan", example = "false")
         boolean deleted,
         @Schema(type = "string", format = "date", example = "15.12.2023")
+        @JsonSerialize(using = DTOInstantSerializer.class)
         Instant startDate,
         @Schema(type = "string", format = "date", example = "20.12.2023")
+        @JsonSerialize(using = DTOInstantSerializer.class)
         Instant endDate,
         @JsonProperty("created_by") 
         @Schema(type = "string", format = "uuid", example = "914a9b76-648e-4b56-81c1-4ed8ff1e0bf3")
         UUID creatorId,
         @JsonProperty("project_id") 
         @Schema(type = "string", format = "uuid", example = "8afaf514-b757-4742-bad6-a0920ab17dc3")
-        UUID projectId
+        UUID projectId,
+        @Schema(type = "array", ref="uuid")
+        List<UUID> dependencies
         ) {
 
     public static TaskReturnDTO convert(Task task) {
@@ -45,8 +52,12 @@ public record TaskReturnDTO(
                 .description(task.getDescription())
                 .deleted(task.isDeleted())
                 .creatorId(task.getCreator() != null ? task.getCreator().getUserId() : null)
-                .startDate(task.getStartDate().toInstant())
-                .endDate(task.getEndDate().toInstant())
+                .startDate(Instant.ofEpochMilli(task.getStartDate().getTime()))
+                .endDate(Instant.ofEpochMilli(task.getEndDate().getTime()))
+                .dependencies(task.getTaskDependencyList().stream()
+                                  .map(TaskDependency::getRequiredTask)
+                                  .map(Task::getTaskId)
+                                  .toList())
                 .build();
     }
 
