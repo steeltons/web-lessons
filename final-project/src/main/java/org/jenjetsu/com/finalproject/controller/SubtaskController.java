@@ -58,7 +58,7 @@ public class SubtaskController{
 
     @GetMapping("/all")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasRole('ROLE_MODERATOR')")
     public Map<String, List<SubtaskReturnDTO>> getAllTasks() {
         List<SubtaskReturnDTO> dtos = this.subtaskService.readAll()
                                           .stream()
@@ -69,6 +69,7 @@ public class SubtaskController{
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ROLE_CREATOR')")
     public Map<String, String> createTask(@RequestBody SubtaskCreateDTO dto,
                                           BearerTokenAuthentication token) {
         Subtask raw = SubtaskCreateDTO.convert(dto);
@@ -79,13 +80,15 @@ public class SubtaskController{
 
     @DeleteMapping("/{projectId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_CREATOR')")
     public void deleteTask(@PathVariable("projectId") UUID id) {
         this.subtaskService.deleteById(id);
     }
 
     @PatchMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void putchTask(@RequestBody SubtaskReturnDTO dto) {
+    @PreAuthorize("hasRole('ROLE_CREATOR')")
+    public void patchTask(@RequestBody SubtaskReturnDTO dto) {
         Subtask mergingProject = SubtaskReturnDTO.convertToSubtask(dto);
         Subtask mergableProject = this.subtaskService.readById(dto.taskId());
         Subtask newProject = mergableProject.patchModel(mergingProject);
@@ -94,6 +97,7 @@ public class SubtaskController{
 
     @PutMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_CREATOR')")
     public void putTask(@RequestBody SubtaskReturnDTO dto) {
         Subtask model = SubtaskReturnDTO.convertToSubtask(dto);
         this.subtaskService.update(model);

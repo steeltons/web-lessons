@@ -39,6 +39,7 @@ public class TaskController {
 
     @GetMapping("/{Id}")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_MEMBER')")
     public TaskReturnDTO getTaskById(@PathVariable("Id") UUID id) {
         Task model = this.taskService.readById(id);
         return TaskReturnDTO.convert(model);
@@ -46,7 +47,7 @@ public class TaskController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasRole('ROLE_MODERATOR')")
     public Map<String, List<TaskReturnDTO>> getAllTasks() {
         List<TaskReturnDTO> dtos = this.taskService.readAll()
                                           .stream()
@@ -57,6 +58,7 @@ public class TaskController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ROLE_CREATOR')")
     public Map<String, String> createTask(@RequestBody TaskCreateDTO dto,
                                           BearerTokenAuthentication token) {
         Task raw = TaskCreateDTO.convert(dto);
@@ -67,13 +69,15 @@ public class TaskController {
 
     @DeleteMapping("/{projectId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_CREATOR')")
     public void deleteTask(@PathVariable("projectId") UUID id) {
         this.taskService.deleteById(id);
     }
 
     @PatchMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void putchTask(@RequestBody TaskReturnDTO dto) {
+    @PreAuthorize("hasRole('ROLE_CREATOR')")
+    public void patchTask(@RequestBody TaskReturnDTO dto) {
         Task mergingProject = TaskReturnDTO.convertToTask(dto);
         Task mergableProject = this.taskService.readById(dto.taskId());
         Task newProject = mergableProject.patchModel(mergingProject);
@@ -82,6 +86,7 @@ public class TaskController {
 
     @PutMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_CREATOR')")
     public void putTask(@RequestBody TaskReturnDTO dto) {
         Task model = TaskReturnDTO.convertToTask(dto);
         this.taskService.update(model);

@@ -59,4 +59,16 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
     )
     public boolean isUserProjectCreator(@Param("userId") UUID userId,
                                         @Param("projectId") UUID projectId);
+
+    @Query(
+        value = """
+                    SELECT EXISTS(
+                        SELECT 1 FROM t_user_project tup
+                        WHERE tup.user_id = :userId
+                        AND tup.project_id = :projectId
+                    )
+                """, nativeQuery = true
+    )
+    public boolean isUserProjectMember(@Param("userId") UUID userId,
+                                       @Param("projectId") UUID projectId);
 }

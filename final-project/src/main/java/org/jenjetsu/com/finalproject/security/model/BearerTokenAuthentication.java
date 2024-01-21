@@ -44,6 +44,12 @@ public class BearerTokenAuthentication extends AbstractAuthenticationToken {
         this(token, Collections.EMPTY_LIST);
     }
 
+    public BearerTokenAuthentication(BearerTokenAuthentication another) {
+        super(another.getAuthorities());
+        this.token = another.token;
+        this.userId = another.userId;
+    }
+
     public String getToken() {
         return this.token.getParsedString();
     }

@@ -44,7 +44,7 @@ public class UserController {
 
     @GetMapping("/all")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasRole('ROLE_MODERATOR')")
     public Map<String, List<UserReturnDTO>> getAllUsers() {
         List<UserReturnDTO> dtos = this.userService
                                        .readAll()
@@ -56,7 +56,7 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasRole('ROLE_MODERATOR')")
     public Map<String, String> createUser(@RequestBody UserCreateDTO dto) {
         User raw = UserCreateDTO.convert(dto);
         raw = this.userService.create(raw);
@@ -81,7 +81,7 @@ public class UserController {
 
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasRole('ROLE_MODERATOR')")
     public void deletUser(@PathVariable("userId") UUID userId) {
         this.userService.deleteById(userId);
     }

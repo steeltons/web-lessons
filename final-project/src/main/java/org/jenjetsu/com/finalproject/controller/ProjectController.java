@@ -43,7 +43,7 @@ public class ProjectController{
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasRole('ROLE_MODERATOR')")
     public Map<String, List<ProjectReturnDTO>> getAllProjects() {
         List<ProjectReturnDTO> dtos = this.projectService.readAll()
                                           .stream()
@@ -66,24 +66,28 @@ public class ProjectController{
 
     @PostMapping("/invite")
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ROLE_CREATOR')")
     public void inviteUserToProject(@RequestBody UserProjectDTO dto) {
         this.projectService.addUserToProject(dto.userId(), dto.projectId());
     }  
 
     @DeleteMapping("/{projectId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_CREATOR')")
     public void delete(@PathVariable("projectId") UUID projectId) {
         this.projectService.deleteById(projectId);
     }
 
     @DeleteMapping("/kick")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_CREATOR')")
     public void kickUserFromProject(@RequestBody UserProjectDTO dto) {
         this.projectService.removeUserFromProject(dto.userId(), dto.projectId());
     }
 
     @PatchMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_CREATOR')")
     public void patchProject(@RequestBody ProjectReturnDTO dto) {
         Project mergingProject = ProjectReturnDTO.convertToProject(dto);
         Project mergableProject = this.projectService.readById(dto.projectId());
@@ -93,6 +97,7 @@ public class ProjectController{
 
     @PutMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_CREATOR')")
     public void putProject(@RequestBody ProjectReturnDTO dto) {
         Project project = ProjectReturnDTO.convertToProject(dto);
         this.projectService.update(project);
