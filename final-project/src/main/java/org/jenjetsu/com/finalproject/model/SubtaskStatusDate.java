@@ -31,7 +31,7 @@ public class SubtaskStatusDate implements Model<Long>{
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "subtask_id")
     private Subtask subtask;
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "subtask_status_id")
     private SubtaskStatus subtaskStatus; 
 

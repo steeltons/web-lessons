@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.hibernate.annotations.Check;
 import org.hibernate.annotations.Checks;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -57,7 +58,7 @@ public class Subtask implements Model<UUID>{
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "task_id", nullable = false)
     private Task task;
-    @OneToMany(mappedBy = "subtask", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "subtask", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Builder.Default
     private List<SubtaskStatusDate> subtaskStatusList = new ArrayList<>();
 

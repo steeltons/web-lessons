@@ -90,15 +90,11 @@ public class SubtaskServiceImpl extends SimpleJpaService<Subtask, UUID>
     }
 
     @Override
-    public List<Subtask> readAllUserSubtasksByParams(UUID userId, UUID projectId, String statusName) {
-        if (statusName != null && !this.subtaskStatusRep.existsByName(statusName)) {
-            throw new EntityNotFoundException(format("Subtask status name %s is not exists",
-                                                     statusName));
-        }
+    public List<Subtask> readAllUserSubtasksByParams(UUID userId, UUID projectId, Boolean notCompleted) {
         if (projectId != null && !this.projectRep.existsById(projectId)) {
             throw new EntityNotFoundException(format("Project with id %s not exists", projectId.toString()));
         }
-        return this.subtaskRep.findAllUserSubtasks(userId, projectId, statusName);
+        return this.subtaskRep.findAllUserSubtasks(userId, projectId, !notCompleted);
     }
 
 

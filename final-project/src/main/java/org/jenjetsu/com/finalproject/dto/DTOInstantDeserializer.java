@@ -1,4 +1,4 @@
-package org.jenjetsu.com.finalproject.controller;
+package org.jenjetsu.com.finalproject.dto;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;

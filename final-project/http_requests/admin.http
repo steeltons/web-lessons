@@ -1,7 +1,7 @@
 @rootUrl=http://localhost:7777
 @ssoUrl=http://localhost:8080/realms/jenjetsu-realm
 @userID=5d61aaac-8282-4c38-83f1-635b46ae42bd
-@accessToken=eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI3QWE5dks0aUpqcG9FRzZ1dDBtblRsN1J4QnNzMGV4OVNFTjR0LXU3TTZVIn0.eyJleHAiOjE3MDU4NDU5NjQsImlhdCI6MTcwNTgzNjk2NCwianRpIjoiOTg1NTdjYWItYzAxMC00MTk0LTgxOTItODBlMzE0ZDgwMmM5IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9qZW5qZXRzdS1yZWFsbSIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiI3MTMzNDEzMy1lY2Q4LTQxZDYtYTExZS00ZjI0MDNiMzRiY2IiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJqZW5qZXRzdS1zc28iLCJzZXNzaW9uX3N0YXRlIjoiZmJmNjJjNzEtOTg0YS00MDhhLTkwZTMtYThkYmRkN2Q4NDY0IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIqIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsIlJPTEVfTU9ERVJBVE9SIiwidW1hX2F1dGhvcml6YXRpb24iLCJkZWZhdWx0LXJvbGVzLWplbmpldHN1LXJlYWxtIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCIsInNpZCI6ImZiZjYyYzcxLTk4NGEtNDA4YS05MGUzLWE4ZGJkZDdkODQ2NCIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJzcHJpbmdfc2VjX3JvbGVzIjpbIm9mZmxpbmVfYWNjZXNzIiwiUk9MRV9NT0RFUkFUT1IiLCJ1bWFfYXV0aG9yaXphdGlvbiIsImRlZmF1bHQtcm9sZXMtamVuamV0c3UtcmVhbG0iXSwicHJlZmVycmVkX3VzZXJuYW1lIjoibWFuYWdlciIsImVtYWlsIjoibWFuYWdlckBtYWlsLmNvbSJ9.WP8_4nlT23RlWFNkp1n3fk1QvOFeKBkQPw-FjQOuDsyIkQrDugK7wVNYSQFe72rg5DJTcwtNk-yMSEAq8LQG8OEfaRHjuTnIot9yWefmOxSKzv5oxWjVCRX7xLG1G4BEgYK41KKBj6i7qNAkDhUw8L3_0lcKw-KEu_uNdKiM4dGbVrbQfEQQ_cCIpxBFvEq2YZlfLBDmY5fGvweRr7jybiOhDbQghrtq-lxsNQDM-rxn_4yqZdOzZ6TFuKOrIFQmTNLxtsCURatJEA2mBKQ1tV0RDIYVXDdmjT-O3anLAEArJYL8eSeUTjkzIHG41O-LAsWDPca4EW8jhdnrPjkgRg
+@accessToken=eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI3QWE5dks0aUpqcG9FRzZ1dDBtblRsN1J4QnNzMGV4OVNFTjR0LXU3TTZVIn0.eyJleHAiOjE3MDU5MjIwMTQsImlhdCI6MTcwNTkxMzAxNCwianRpIjoiN2U0MWNlZGMtOTM3ZS00ZGEwLTk4OGMtNWI2MTNmNzQ4N2RlIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9qZW5qZXRzdS1yZWFsbSIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiI3MTMzNDEzMy1lY2Q4LTQxZDYtYTExZS00ZjI0MDNiMzRiY2IiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJqZW5qZXRzdS1zc28iLCJzZXNzaW9uX3N0YXRlIjoiZDQ4MTQ2N2YtODg1My00YjA1LWFiM2UtZWUxZTZhZGMwZjcwIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIqIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsIlJPTEVfTU9ERVJBVE9SIiwidW1hX2F1dGhvcml6YXRpb24iLCJkZWZhdWx0LXJvbGVzLWplbmpldHN1LXJlYWxtIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCIsInNpZCI6ImQ0ODE0NjdmLTg4NTMtNGIwNS1hYjNlLWVlMWU2YWRjMGY3MCIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJzcHJpbmdfc2VjX3JvbGVzIjpbIm9mZmxpbmVfYWNjZXNzIiwiUk9MRV9NT0RFUkFUT1IiLCJ1bWFfYXV0aG9yaXphdGlvbiIsImRlZmF1bHQtcm9sZXMtamVuamV0c3UtcmVhbG0iXSwicHJlZmVycmVkX3VzZXJuYW1lIjoibWFuYWdlciIsImVtYWlsIjoibWFuYWdlckBtYWlsLmNvbSJ9.GfaeFLHo94grWNtp7VTM2wdfzOaVX7nYSovALWZLjfOr_OGZFhojWYQAAf1HYZvxqcrWG2WGBxlFLsN-H8Ci0N19rtr_SJp1kdqTIJiLT9sa2ZSrQZ-kg_lvH2vqTljEny2Ao-LcwR_8pMwvKHPIhrS6HbszkT01GLQGj6LOIZRg-6MkSVNC3UW44gaMdyVVf_Bx7y4_4zXJKz2x23N8LppnkoHo0yDoNM4_RLSep_HhYPR1Yx1H3qOKOJBu_Fyjxo-REgaBh7Httsm5tt89_TchPOueP9bWhRnh8YI0ol4nk9PuZpamJ0mwK-Esg1BcLI-P2UBM0QC0_Mt4jcVCKg
 @refereshToken=eyJhbGciOiJIUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJiMjZkMDlkMy1mNTI5LTRkYWItODdhZS1iN2E5ZTg4Nzk1MjEifQ.eyJleHAiOjE3MDU4MDIzNzAsImlhdCI6MTcwNTgwMDU3MiwianRpIjoiM2FkMzVkNGYtMzg2Mi00OWVmLWFmZDgtZjc5ZmExNGVkZWQ5IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9qZW5qZXRzdS1yZWFsbSIsImF1ZCI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvamVuamV0c3UtcmVhbG0iLCJzdWIiOiI3MTMzNDEzMy1lY2Q4LTQxZDYtYTExZS00ZjI0MDNiMzRiY2IiLCJ0eXAiOiJSZWZyZXNoIiwiYXpwIjoiamVuamV0c3Utc3NvIiwic2Vzc2lvbl9zdGF0ZSI6IjExMTY2ZjRlLTZlYTktNGEyOS05MjNlLTk1NDUzN2M1NjMzOSIsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJzaWQiOiIxMTE2NmY0ZS02ZWE5LTRhMjktOTIzZS05NTQ1MzdjNTYzMzkifQ.mWuUBFoRX_aKwppvtKFqXHNsMTxsMx-TxBUfF-INlI8
 @ProjectId=be6c63a9-bb72-474f-8683-ba8814fdfd01
 
@@ -71,7 +71,7 @@ Authorization: Bearer {{accessToken}}
 {
     "title" : "Super task_3",
     "project_id" : "{{ProjectId}}",
-    "start_date" : "01.01.2022",
+    "start_date" : "21.01.2022",
     "end_date" : "05.02.2022",
     "dependencies" : ["{{Task1}}", "{{Task2}}"]
 }
@@ -83,7 +83,7 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-    "title" : "Super subtask_3",
+    "title" : "Super subtask_4",
     "task_id" : "{{Task1}}",
     "start_date" : "23.01.2024",
     "end_date" : "25.01.2024",
@@ -113,6 +113,11 @@ Authorization: Bearer {{accessToken}}
 GET {{rootUrl}}/api/v1/subtasks/all
 Authorization: Bearer {{accessToken}}
 
+### GET ALL MY SUBTASKS
+
+GET {{rootUrl}}/api/v1/subtasks?not_completed=true
+Authorization: Bearer {{accessToken}}
+
 ### GET ALL PROJECTS
 
 GET {{rootUrl}}/api/v1/projects
@@ -127,4 +132,14 @@ Authorization: Bearer {{accessToken}}
 
 GET {{rootUrl}}/api/v1/subtask-statuses
 Authorization: Bearer {{accessToken}}
+
+### PATCH SUBTASK
+
+PATCH {{rootUrl}}/api/v1/subtasks
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "subtask_status"
+}
 

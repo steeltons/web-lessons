@@ -36,7 +36,7 @@ public class SubtaskController{
 
     @GetMapping("/{Id}")
     @ResponseStatus(HttpStatus.OK)
-    public SubtaskReturnDTO getTaskById(@PathVariable("Id") UUID id) {
+    public SubtaskReturnDTO getSubtaskById(@PathVariable("Id") UUID id) {
         Subtask model = this.subtaskService.readById(id);
         return SubtaskReturnDTO.convert(model);
     }
@@ -45,10 +45,10 @@ public class SubtaskController{
     @ResponseStatus(HttpStatus.OK)
     public Map<String, List<SubtaskReturnDTO>> getAllMySubtasks(
                                 @RequestParam(name = "projectId", required = false) UUID projectId,
-                                @RequestParam(name = "statusName", required = false) String statusName,
+                                @RequestParam(name = "not_completed", defaultValue = "false") Boolean notCompleted,
                                 BearerTokenAuthentication token) {
         List<SubtaskReturnDTO> dtos = this.subtaskService
-                                          .readAllUserSubtasksByParams(token.getUserId(), projectId, statusName)
+                                          .readAllUserSubtasksByParams(token.getUserId(), projectId, notCompleted)
                                           .stream()
                                           .map(SubtaskReturnDTO::convert)
                                           .toList();
@@ -59,7 +59,7 @@ public class SubtaskController{
     @GetMapping("/all")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ROLE_MODERATOR')")
-    public Map<String, List<SubtaskReturnDTO>> getAllTasks() {
+    public Map<String, List<SubtaskReturnDTO>> getAllSubtasks() {
         List<SubtaskReturnDTO> dtos = this.subtaskService.readAll()
                                           .stream()
                                           .map(SubtaskReturnDTO::convert)
@@ -70,7 +70,7 @@ public class SubtaskController{
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ROLE_CREATOR')")
-    public Map<String, String> createTask(@RequestBody SubtaskCreateDTO dto,
+    public Map<String, String> createSubtask(@RequestBody SubtaskCreateDTO dto,
                                           BearerTokenAuthentication token) {
         Subtask raw = SubtaskCreateDTO.convert(dto);
         raw.setCreator(User.builder().userId(token.getUserId()).build());
@@ -81,14 +81,14 @@ public class SubtaskController{
     @DeleteMapping("/{projectId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_CREATOR')")
-    public void deleteTask(@PathVariable("projectId") UUID id) {
+    public void deleteSubtask(@PathVariable("projectId") UUID id) {
         this.subtaskService.deleteById(id);
     }
 
     @PatchMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_CREATOR')")
-    public void patchTask(@RequestBody SubtaskReturnDTO dto) {
+    public void patchSubtask(@RequestBody SubtaskReturnDTO dto) {
         Subtask mergingProject = SubtaskReturnDTO.convertToSubtask(dto);
         Subtask mergableProject = this.subtaskService.readById(dto.taskId());
         Subtask newProject = mergableProject.patchModel(mergingProject);
@@ -98,7 +98,7 @@ public class SubtaskController{
     @PutMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_CREATOR')")
-    public void putTask(@RequestBody SubtaskReturnDTO dto) {
+    public void putSubtask(@RequestBody SubtaskReturnDTO dto) {
         Subtask model = SubtaskReturnDTO.convertToSubtask(dto);
         this.subtaskService.update(model);
     }

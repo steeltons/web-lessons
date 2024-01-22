@@ -3,7 +3,6 @@ package org.jenjetsu.com.finalproject.dto;
 import java.sql.Date;
 import java.time.Instant;
 
-import org.jenjetsu.com.finalproject.controller.DTOInstantDeserializer;
 import org.jenjetsu.com.finalproject.model.Project;
 
 import com.fasterxml.jackson.annotation.JsonProperty;

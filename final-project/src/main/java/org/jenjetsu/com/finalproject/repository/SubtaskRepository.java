@@ -16,7 +16,9 @@ public interface SubtaskRepository extends JpaRepository<Subtask, UUID>{
     @Query(
         value = """
                 select 
-                    ts.* 
+                    ts.*,
+                    tss.name,
+                    tssd.date
                 from t_subtask ts 
                 left join t_task tt on ts.task_id = tt.task_id 
                 left join t_subtask_status_date tssd on tssd.subtask_id = ts.subtask_id 
@@ -27,12 +29,12 @@ public interface SubtaskRepository extends JpaRepository<Subtask, UUID>{
                                  from t_subtask_status_date tssd2 
                                  where tssd2.subtask_id = ts.subtask_id
                                 )
-                and (tss.name != :statusName or CAST(:statusName as VARCHAR(64)) = null)
+                and (tss.subtask_status_id != 151 or :showAllSubtasks)
                 """, nativeQuery = true
     )
     public List<Subtask> findAllUserSubtasks(@Param("userId") UUID userId,
                                              @Param("projectId") UUID projectId,
-                                             @Param("statusName") String statusName);
+                                             @Param("showAllSubtasks") Boolean showAlsoCompleted);
 
     @Query(
         value = """

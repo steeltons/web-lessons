@@ -2,9 +2,11 @@ package org.jenjetsu.com.finalproject.dto;
 
 import java.sql.Date;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 import org.jenjetsu.com.finalproject.model.Subtask;
+import org.jenjetsu.com.finalproject.model.SubtaskStatusDate;
 import org.jenjetsu.com.finalproject.model.Task;
 import org.jenjetsu.com.finalproject.model.User;
 
@@ -38,6 +40,8 @@ public record SubtaskReturnDTO(
     @JsonProperty(value = "user_id", required = true)
     @Schema(type = "string", format = "uuid", example = "d6a8c677-3702-49f2-9ec5-cd6ea845b4bc")
     UUID userId,
+    @Schema(type = "array", ref="SubtaskStatusDateDTO")
+    List<SubtaskStatusDateReturnDTO> statuses,
     @JsonProperty(value = "creator_id", required = true)
     @Schema(type = "string", format = "uuid", example = "761c3d6e-ea75-44e6-a7c2-e8803f9fb182")
     UUID creatorId) {
@@ -51,8 +55,15 @@ public record SubtaskReturnDTO(
                                .startDate(Instant.ofEpochMilli(subtask.getStartDate().getTime()))
                                .endDate(Instant.ofEpochMilli(subtask.getEndDate().getTime()))
                                .userId(subtask.getUser() != null ? subtask.getUser().getUserId() : null)
+                               .statuses(convertStatuses(subtask.getSubtaskStatusList()))
                                .creatorId(subtask.getCreator() != null ? subtask.getCreator().getUserId() : null)
                                .build();
+    }
+
+    private static List<SubtaskStatusDateReturnDTO> convertStatuses(List<SubtaskStatusDate> list) {
+        return list.stream()
+                   .map(SubtaskStatusDateReturnDTO::convert)
+                   .toList();
     }
 
     public static Subtask convertToSubtask(SubtaskReturnDTO dto) {
