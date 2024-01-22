@@ -67,12 +67,14 @@ public record SubtaskReturnDTO(
     }
 
     public static Subtask convertToSubtask(SubtaskReturnDTO dto) {
+        Date start = dto.startDate != null ? new Date(dto.startDate.toEpochMilli()) : null;
+        Date end = dto.endDate != null ? new Date(dto.endDate.toEpochMilli()) : null;
         return Subtask.builder()
                       .subtaskId(dto.subtaskId)
                       .title(dto.title)
                       .description(dto.description)
-                      .startDate(new Date(dto.startDate.toEpochMilli()))
-                      .endDate(new Date(dto.endDate.toEpochMilli()))
+                      .startDate(start)
+                      .endDate(end)
                       .task(Task.builder().taskId(dto.taskId).build())
                       .user(User.builder().userId(dto.userId).build())
                       .creator(User.builder().userId(dto.userId).build())

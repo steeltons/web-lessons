@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.jenjetsu.com.finalproject.model.Task;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -60,4 +61,23 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
                 """
     )
     public UUID findProjectIdByTaskId(@Param("taskId") UUID taskId);
+
+    @Override
+    @Query(
+        value = """
+                    INSERT INTO t_task_delete(task_id)
+                    VALUES (:taskId)
+                """, nativeQuery = true
+    )
+    @Modifying
+    public void deleteById(@Param("taskId") UUID taskId);
+
+    @Query(
+        value = """
+                    DELETE FROM t_task_delete
+                    WHERE task_id = :taskId
+                """, nativeQuery = true
+    )
+    @Modifying
+    public void restoreTask(@Param("taskId") UUID taskId);
 }

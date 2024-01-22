@@ -6,4 +6,5 @@ import org.jenjetsu.com.finalproject.model.Task;
 
 public interface TaskService extends CRUDService<Task, UUID> {
     
+    public void restoreTask(UUID taskId);
 }

@@ -71,4 +71,5 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
     )
     public boolean isUserProjectMember(@Param("userId") UUID userId,
                                        @Param("projectId") UUID projectId);
+
 }

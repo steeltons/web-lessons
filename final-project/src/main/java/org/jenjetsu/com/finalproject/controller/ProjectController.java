@@ -91,8 +91,8 @@ public class ProjectController{
     public void patchProject(@RequestBody ProjectReturnDTO dto) {
         Project mergingProject = ProjectReturnDTO.convertToProject(dto);
         Project mergableProject = this.projectService.readById(dto.projectId());
-        Project newProject = mergableProject.patchModel(mergingProject);
-        this.projectService.update(newProject);
+        mergableProject.merge(mergingProject);
+        this.projectService.update(mergableProject);
     }
 
     @PutMapping

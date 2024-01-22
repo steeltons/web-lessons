@@ -1,6 +1,7 @@
 package org.jenjetsu.com.finalproject.dto;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -30,10 +31,10 @@ public record TaskReturnDTO(
         @Schema(type = "booelan", example = "false")
         boolean deleted,
         @Schema(type = "string", format = "date", example = "15.12.2023")
-        @JsonSerialize(using = DTOInstantSerializer.class)
+        @JsonSerialize(using = DTOInstantSerializer.class, converter = DTOInstantDeserializer.class)
         Instant startDate,
         @Schema(type = "string", format = "date", example = "20.12.2023")
-        @JsonSerialize(using = DTOInstantSerializer.class)
+        @JsonSerialize(using = DTOInstantSerializer.class, converter = DTOInstantDeserializer.class)
         Instant endDate,
         @JsonProperty("created_by") 
         @Schema(type = "string", format = "uuid", example = "914a9b76-648e-4b56-81c1-4ed8ff1e0bf3")
@@ -62,14 +63,16 @@ public record TaskReturnDTO(
     }
 
     public static Task convertToTask(TaskReturnDTO dto) {
+        Date start = dto.startDate != null ? new Date(Timestamp.from(dto.startDate).getTime()) : null;
+        Date end = dto.endDate != null ? new Date(Timestamp.from(dto.endDate).getTime()) : null;
         return Task.builder()
                    .taskId(dto.taskId)
                    .title(dto.title)
                    .description(dto.description)
                    .deleted(dto.deleted)
                    .creator(User.builder().userId(dto.creatorId).build())
-                   .startDate(new Date(dto.startDate.toEpochMilli()))
-                   .endDate(new Date(dto.endDate.toEpochMilli()))
+                   .startDate(start)
+                   .endDate(end)
                    .build();
     }
 }

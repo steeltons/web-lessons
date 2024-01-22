@@ -45,26 +45,13 @@ public class SubtaskStatusDate implements Model<Long>{
         return "subtask_status_date";
     }
 
-    @Override
-    public SubtaskStatusDate patchModel(Model anoth) {
+    public void merge(Model anoth) {
         if (!this.getClass().isAssignableFrom(anoth.getClass())) {
-            throw new IllegalArgumentException("Another is not same to SubtaskStatusDate");
+            throw new IllegalArgumentException("Merging object is not SubtaskStatusDate");
         }
         SubtaskStatusDate another = (SubtaskStatusDate) anoth;
-        return SubtaskStatusDate.builder() 
-                                .subtaskStatusDateId(this.subtaskStatusDateId)
-                                .subtask(checkSimilarity(this.subtask.getSubtaskId(), another.subtask.getSubtaskId())
-                                    ? this.getSubtask() : another.getSubtask())
-                                .subtaskStatus(checkSimilarity(this.getSubtaskStatus().getSubtaskStatusId(), 
-                                                               another.getSubtaskStatus().getSubtaskStatusId())
-                                    ? this.getSubtaskStatus() : another.getSubtaskStatus())
-                                .date(checkSimilarity(this.getDate(), another.getDate())
-                                    ? this.getDate() : another.getDate())
-                                .build();
-    }
-
-    private boolean checkSimilarity(Object myVal, Object anotherVal) {
-        return anotherVal != null && anotherVal.equals(myVal);
+        this.date = another.date == null && another.date.equals(this.date)
+                        ? this.date : another.date;
     }
     
 }

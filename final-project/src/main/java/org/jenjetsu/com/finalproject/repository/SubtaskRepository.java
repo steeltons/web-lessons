@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.jenjetsu.com.finalproject.model.Subtask;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -85,4 +86,14 @@ public interface SubtaskRepository extends JpaRepository<Subtask, UUID>{
                 """
     )
     public UUID findProjectIdBySubtaskId(@Param("subtaskId") UUID subtaskId);
+
+    @Override
+    @Query(
+        value = """
+                    INSERT INTO t_subtask_delete(subtas_id)
+                    VALUES (:subtaskId)
+                """, nativeQuery = true
+    )
+    @Modifying
+    public void deleteById(@Param("subtaskId") UUID subtaskId);
 }

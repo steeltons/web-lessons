@@ -61,29 +61,19 @@ public class User implements Model<UUID> {
         return this.getUserId();
     }
 
-    @Override
-    public User patchModel(Model another) {
-        if (!User.class.isAssignableFrom(another.getClass())) {
-            throw new RuntimeException("");
+    public void merge(Model anoth) {
+        if (!this.getClass().isAssignableFrom(anoth.getClass())) {
+            throw new IllegalArgumentException("Merging object is not User");
         }
-        User anotherUser = (User) another;
-        return User.builder()
-                    .userId(this.userId)
-                    .username(checkSimilarity(this.username, anotherUser.username) 
-                                ? this.username : anotherUser.username)
-                    .email(checkSimilarity(this.email, anotherUser.email)
-                                ? this.email : anotherUser.email)
-                    .firstname(checkSimilarity(this.firstname, anotherUser.firstname)
-                                ? this.firstname : anotherUser.firstname)
-                    .lastname(checkSimilarity(this.lastname, anotherUser.lastname)
-                                ? this.lastname : anotherUser.lastname)
-                    .blocked(checkSimilarity(this.blocked, anotherUser.blocked)
-                                ? this.blocked : anotherUser.blocked)
-                    .build();
+        User another = (User) anoth;
+        this.username = checkSimilarity(this.username, another.username) ? this.username : another.username;
+        this.email = checkSimilarity(this.email, another.email) ? this.email : another.email;
+        this.firstname = checkSimilarity(this.firstname, another.firstname) ? this.firstname : another.firstname;
+        this.lastname = checkSimilarity(this.lastname, another.lastname) ? this.lastname : another.lastname;
     }
 
     private boolean checkSimilarity(Object myVal, Object anotherVal) {
-        return anotherVal != null && anotherVal.equals(myVal);
+        return anotherVal == null && anotherVal.equals(myVal);
     }
 
 }

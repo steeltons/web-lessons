@@ -8,7 +8,9 @@ import java.util.UUID;
 import org.hibernate.annotations.Check;
 import org.hibernate.annotations.Checks;
 
-import jakarta.persistence.CascadeType;
+import static jakarta.persistence.CascadeType.DETACH;
+import static jakarta.persistence.CascadeType.PERSIST;
+import static jakarta.persistence.CascadeType.REMOVE;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -49,16 +51,16 @@ public class Subtask implements Model<UUID>{
     @Column(name = "deleted", columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean deleted;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {})
     @JoinColumn(name = "user_id")
     private User user;
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {})
     @JoinColumn(name = "creator_id")
     private User creator;
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {})
     @JoinColumn(name = "task_id", nullable = false)
     private Task task;
-    @OneToMany(mappedBy = "subtask", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "subtask", fetch = FetchType.EAGER, cascade = {PERSIST, DETACH, REMOVE})
     @Builder.Default
     private List<SubtaskStatusDate> subtaskStatusList = new ArrayList<>();
 
@@ -79,34 +81,18 @@ public class Subtask implements Model<UUID>{
         return this.getSubtaskId();
     }
 
-    @Override
-    public Subtask patchModel(Model anoth) {
+    public void merge(Model anoth) {
         if (!this.getClass().isAssignableFrom(anoth.getClass())) {
-            throw new IllegalArgumentException("Another is not same to Subtask");
+            throw new IllegalArgumentException("Merging object is not Subtask");
         }
         Subtask another = (Subtask) anoth;
-        return Subtask.builder()
-                        .subtaskId(this.subtaskId)
-                        .title(checkSimilarity(this.title, another.title)
-                            ? this.title : another.title)
-                        .description(checkSimilarity(this.description, another.description)
-                            ? this.description : another.description)
-                        .startDate(checkSimilarity(this.startDate, another.startDate)
-                            ? this.startDate : another.startDate)
-                        .endDate(checkSimilarity(this.endDate, another.endDate)
-                            ? this.endDate : another.endDate)
-                        .deleted(checkSimilarity(this.deleted, another.deleted)
-                            ? this.deleted : another.deleted)
-                        .creator(checkSimilarity(this.creator.getUserId(), another.getCreator().getUserId())
-                            ? this.getCreator() : another.getCreator())
-                        .user(checkSimilarity(this.getUser().getUserId(), another.getUser().getUserId())
-                            ? this.getUser() : another.getUser())
-                        .task(checkSimilarity(this.getTask().getTaskId(), another.getTask().getTaskId())
-                            ? this.getTask() : another.getTask())
-                      .build();
+        this.title = checkSimilarity(this.title, another.title) ? this.title : another.title;
+        this.description = checkSimilarity(this.description, another.description) ? this.description : another.description;
+        this.startDate = checkSimilarity(this.startDate, another.startDate) ? this.startDate : another.startDate;
+        this.endDate = checkSimilarity(this.endDate, another.endDate) ? this.endDate : another.endDate;
     }
 
     private boolean checkSimilarity(Object myVal, Object anotherVal) {
-        return anotherVal != null && anotherVal.equals(myVal);
+        return anotherVal == null && anotherVal.equals(myVal);
     }
 }

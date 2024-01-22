@@ -7,8 +7,10 @@ import java.util.UUID;
 
 import org.hibernate.annotations.Check;
 import org.hibernate.annotations.Checks;
+import org.hibernate.annotations.DynamicUpdate;
 
-import jakarta.persistence.CascadeType;
+import static jakarta.persistence.CascadeType.PERSIST;
+import static jakarta.persistence.CascadeType.REMOVE;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -33,6 +35,7 @@ import lombok.ToString;
 @Checks(
     value = @Check(constraints = "start_date < end_date")
 )
+@DynamicUpdate
 public class Task implements Model<UUID>{
     
     @Id @GeneratedValue(strategy = GenerationType.UUID)
@@ -49,16 +52,16 @@ public class Task implements Model<UUID>{
     @Column(name = "deleted", columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean deleted;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "creator_id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {})
+    @JoinColumn(name = "creator_id", updatable = false)
     private User creator;
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "project_id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {})
+    @JoinColumn(name = "project_id", updatable = false)
     private Project project;
-    @OneToMany(mappedBy = "task", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "task", fetch = FetchType.LAZY, cascade = {PERSIST, REMOVE})
     @Builder.Default
     private List<Subtask> subtaskList = new ArrayList<>();
-    @OneToMany(mappedBy = "task", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "task", fetch = FetchType.LAZY, cascade = {PERSIST, REMOVE})
     @Builder.Default
     private List<TaskDependency> taskDependencyList = new ArrayList<>();
 
@@ -77,32 +80,20 @@ public class Task implements Model<UUID>{
         return this.taskId;
     }
 
-    @Override
-    public Task patchModel(Model anoth) {
+    public void merge(Model anoth) {
         if (!this.getClass().isAssignableFrom(anoth.getClass())) {
-            throw new IllegalArgumentException("Another clas is not Task");
+            throw new IllegalArgumentException("Merging object is not Task");
         }
         Task another = (Task) anoth;
-        return Task.builder()
-                   .taskId(this.taskId)
-                   .title(checkSimilarity(this.title, another.title)
-                        ? this.title : another.title)
-                   .description(checkSimilarity(this.description, another.description)
-                        ? this.description : another.description)
-                   .startDate(checkSimilarity(this.startDate, another.startDate)
-                        ? this.startDate : another.startDate)
-                   .endDate(checkSimilarity(this.endDate, another.endDate)
-                        ? this.endDate : another.endDate)
-                   .deleted(checkSimilarity(this.deleted, another.deleted)
-                        ? this.deleted : another.deleted)
-                   .creator(checkSimilarity(this.creator.getUserId(), another.getCreator().getUserId())
-                        ? this.getCreator() : another.getCreator())
-                   .project(checkSimilarity(this.getProject().getProjectId(), another.getProject().getProjectId())
-                        ? this.getProject() : another.getProject())
-                   .build();
+        this.title = checkSimilarity(this.title, another.title) ? this.title : another.title;
+        this.description = checkSimilarity(this.description, another.description) ? this.description : another.description;
+        this.startDate = checkSimilarity(this.startDate, another.startDate) ? this.startDate : another.startDate;
+        this.endDate = checkSimilarity(this.endDate, another.endDate) ? this.endDate : another.endDate;
+        this.deleted = checkSimilarity(this.deleted, another.deleted) ? this.deleted : another.deleted;
     }
 
     private boolean checkSimilarity(Object myVal, Object anotherVal) {
-        return anotherVal != null && anotherVal.equals(myVal);
+          return anotherVal == null || anotherVal.equals(myVal);
     }
+
 }

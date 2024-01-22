@@ -67,21 +67,26 @@ public class TaskController {
         return Map.of("task_id", raw.getTaskId().toString());
     }
 
-    @DeleteMapping("/{projectId}")
+    @DeleteMapping("/{taskId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_CREATOR')")
-    public void deleteTask(@PathVariable("projectId") UUID id) {
+    public void deleteTask(@PathVariable("taskId") UUID id) {
         this.taskService.deleteById(id);
+    }
+
+    @PostMapping("/restore/{taskId}")
+    @PreAuthorize("hasRole('ROLE_CREATOR')")
+    @ResponseStatus(HttpStatus.OK)
+    public void restoreDeletedTask(@PathVariable("taskId") UUID id) {
+        this.taskService.restoreTask(id);
     }
 
     @PatchMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_CREATOR')")
     public void patchTask(@RequestBody TaskReturnDTO dto) {
-        Task mergingProject = TaskReturnDTO.convertToTask(dto);
-        Task mergableProject = this.taskService.readById(dto.taskId());
-        Task newProject = mergableProject.patchModel(mergingProject);
-        this.taskService.update(newProject);
+        Task mergingTask = TaskReturnDTO.convertToTask(dto);
+        this.taskService.update(mergingTask);
     }
 
     @PutMapping

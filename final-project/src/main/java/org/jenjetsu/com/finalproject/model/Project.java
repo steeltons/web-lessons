@@ -76,25 +76,14 @@ public class Project implements Model<UUID>{
         return this.getProjectId();
     }
 
-    @Override
-    public Project patchModel(Model anoth) {
+    public void merge(Model anoth) {
         if (!this.getClass().isAssignableFrom(anoth.getClass())) {
-            throw new IllegalArgumentException("Another is not same to Project");
+            throw new IllegalArgumentException("Merging object is not Project");
         }
         Project another = (Project) anoth;
-        return Project.builder()
-                        .projectId(this.projectId)
-                        .name(checkSimilarity(this.name, another.name)
-                            ? this.name : another.name)
-                        .startDate(checkSimilarity(this.startDate, another.startDate)
-                            ? this.startDate : another.startDate)
-                       .endDate(checkSimilarity(this.endDate, another.endDate)
-                            ? this.endDate : another.endDate)
-                       .deleted(checkSimilarity(this.deleted, another.deleted)
-                            ? this.deleted : another.deleted)
-                       .createdBy(checkSimilarity(this.createdBy.getUserId(), another.getCreatedBy().getUserId())
-                            ? this.getCreatedBy() : another.getCreatedBy())
-                        .build();
+        this.name = checkSimilarity(this.name, another.name) ? this.name : another.name;
+        this.startDate = checkSimilarity(this.startDate, another.startDate) ? this.startDate : another.startDate;
+        this.endDate = checkSimilarity(this.endDate, another.endDate) ? this.endDate : another.endDate;
     }
 
     private boolean checkSimilarity(Object myVal, Object anotherVal) {

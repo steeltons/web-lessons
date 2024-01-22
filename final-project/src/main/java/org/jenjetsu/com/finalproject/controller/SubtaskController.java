@@ -91,8 +91,8 @@ public class SubtaskController{
     public void patchSubtask(@RequestBody SubtaskReturnDTO dto) {
         Subtask mergingProject = SubtaskReturnDTO.convertToSubtask(dto);
         Subtask mergableProject = this.subtaskService.readById(dto.taskId());
-        Subtask newProject = mergableProject.patchModel(mergingProject);
-        this.subtaskService.update(newProject);
+        mergableProject.merge(mergingProject);
+        this.subtaskService.update(mergableProject);
     }
 
     @PutMapping

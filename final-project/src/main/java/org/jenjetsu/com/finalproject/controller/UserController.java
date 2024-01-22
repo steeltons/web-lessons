@@ -59,6 +59,7 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_MODERATOR')")
     public Map<String, String> createUser(@RequestBody UserCreateDTO dto) {
         User raw = UserCreateDTO.convert(dto);
+        raw.setBlocked(false);
         raw = this.userService.create(raw);
         return Map.of("user_id", raw.getUserId().toString());
     } 
@@ -75,8 +76,8 @@ public class UserController {
     public void pathcUser(@RequestBody UserReturnDTO dto) {
         User mergingUser = UserReturnDTO.convertToUser(dto);
         User mergableUser = this.userService.readById(mergingUser.getUserId());
-        User newUser = mergableUser.patchModel(mergingUser);
-        this.userService.update(newUser);
+        mergableUser.merge(mergingUser);
+        this.userService.update(mergableUser);
     }
 
     @DeleteMapping("/{userId}")

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -68,8 +67,8 @@ public abstract class CRUDController<T extends Model<ID>, ID extends Serializabl
     public void pathcEntity(@RequestBody ObjectNode dto) {
         T modelToPatch = this.modelDeserializer.convert(dto);
         T existModel = this.service.readById(modelToPatch.getModelId());
-        T mergedModel = (T) existModel.patchModel(modelToPatch);
-        this.service.update(mergedModel);
+        existModel.merge(modelToPatch);
+        this.service.update(existModel);
     }
 
     @PutMapping

@@ -7,7 +7,6 @@ import java.util.UUID;
 import org.jenjetsu.com.finalproject.exception.EntityNotFoundException;
 import org.jenjetsu.com.finalproject.model.Subtask;
 import org.jenjetsu.com.finalproject.model.User;
-import org.jenjetsu.com.finalproject.repository.SubtaskRepository;
 import org.jenjetsu.com.finalproject.repository.UserRepository;
 import org.jenjetsu.com.finalproject.service.UserService;
 import org.springframework.cache.annotation.Cacheable;
@@ -18,13 +17,10 @@ public class UserServiceImpl extends SimpleJpaService<User, UUID>
                              implements UserService {
     
     private final UserRepository userRep;
-    private final SubtaskRepository subtaskRep;
 
-    public UserServiceImpl(UserRepository userRep,
-                           SubtaskRepository subtaskRep) {
+    public UserServiceImpl(UserRepository userRep) {
         super(User.class, userRep);
         this.userRep = userRep;
-        this.subtaskRep = subtaskRep;
     }
 
     @Override
@@ -49,10 +45,12 @@ public class UserServiceImpl extends SimpleJpaService<User, UUID>
         return null;
     }
 
+    @Override
     public boolean existsByUsername(String username) {
         return (username != null) && this.userRep.existsByUsername(username);
     }
 
+    @Override
     public boolean existsByEmail(String email) {
         return (email != null) && this.userRep.existsByEmail(email);
     }
